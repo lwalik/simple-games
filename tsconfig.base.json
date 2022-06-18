@@ -15,7 +15,8 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
-      "@rock-paper-scissors": ["libs/rock-paper-scissors/src/index.ts"]
+      "@rock-paper-scissors": ["libs/rock-paper-scissors/src/index.ts"],
+      "@navigation": ["libs/navigation/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]
