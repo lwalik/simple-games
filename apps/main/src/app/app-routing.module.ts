@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { HomePageModule } from './pages/home.page-module';
 import { LoginPageModule } from './pages/login.page-module';
+import { GamesFlowPageModule } from './pages/games-flow.page-module';
 import { GamesLibraryPageModule } from './pages/games-library.page-module';
 
 const routes: Routes = [
@@ -15,7 +16,7 @@ const routes: Routes = [
   },
   {
     path: 'games',
-    loadChildren: () => GamesLibraryPageModule,
+    loadChildren: () => GamesFlowPageModule,
   },
 ];
 @NgModule({
