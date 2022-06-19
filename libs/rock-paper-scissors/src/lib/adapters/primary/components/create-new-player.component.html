@@ -1,0 +1,7 @@
+<form [formGroup]="newPlayer" (ngSubmit)="onNewPlayerSubmitted(newPlayer)">
+  <input type="text" formControlName="username" placeholder="Username" /><input
+    type="text"
+    formControlName="password"
+    placeholder="Password"
+  /><input type="submit" value="Submit" />
+</form>

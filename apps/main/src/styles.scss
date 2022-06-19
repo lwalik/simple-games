@@ -1,6 +1,6 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import 'tailwindcss/base.css';
+@import 'tailwindcss/components.css';
+@import 'tailwindcss/utilities.css';
 
 /* You can add global styles to this file, and also import other style files */
 
@@ -9,6 +9,7 @@ body {
   height: 100%;
 }
 body {
+  background-color: rgb(30, 41, 59);
   margin: 0;
   font-family: Roboto, 'Helvetica Neue', sans-serif;
 }
