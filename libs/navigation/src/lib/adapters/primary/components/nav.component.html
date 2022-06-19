@@ -1,0 +1,13 @@
+<div class="flex justify-start items-center h-12 text-sm text-white font-light">
+  <ul class="w-full flex gap-4">
+    <li *ngFor="let link of navLinks$ | async">
+      <a class="mx-2 px-2 hover:font-normal" [routerLink]="link.url">
+        {{ link.name }}</a
+      >
+    </li>
+  </ul>
+
+  <div class="mr-4">
+    <a class="mx-2 px-2 hover:font-normal" routerLink="/">Login</a>
+  </div>
+</div>
