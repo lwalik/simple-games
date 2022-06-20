@@ -1,3 +1,5 @@
 {
-  "cSpell.language": "en,pl"
+  "cSpell.language": "en,pl",
+  "lowgular.features.legacy": true,
+  "lowgular.features.experimental": true
 }

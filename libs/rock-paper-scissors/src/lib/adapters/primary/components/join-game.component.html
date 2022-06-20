@@ -4,23 +4,51 @@
       Waiting for all players...
     </p>
   </div>
-  <ul class="grid grid-cols-6 gap-4">
-    <li *ngFor="let player of players$ | async">
-      <div *ngIf="player.isActive">
-        <button class="w-full h-full h-14 w-16" mat-flat-button color="warn">
-          +
-        </button>
-      </div>
-      <div *ngIf="!player.isActive">
-        <button
-          class="w-full h-full h-14 w-16"
-          mat-flat-button
-          color="warn"
-          disabled
-        >
-          +
-        </button>
-      </div>
-    </li>
-  </ul>
+  <div *ngIf="players$ | async as players">
+    <ul class="grid grid-cols-6 gap-4">
+      <li *ngFor="let player of players">
+        <div *ngIf="!player.isActive">
+          <button
+            class="w-full h-full h-14 w-16"
+            mat-flat-button
+            color="warn"
+            (click)="onJoinButtonClicked(player, context)"
+            *ngIf="context$ | async as context"
+          >
+            +
+          </button>
+        </div>
+        <div *ngIf="player.isActive">
+          <button
+            class="w-full h-full h-14 w-16"
+            (click)="onJoinButtonClicked(player, context)"
+            *ngIf="context$ | async as context"
+            mat-flat-button
+            color="warn"
+            disabled
+          >
+            +
+          </button>
+        </div>
+      </li>
+    </ul>
+
+    <div class="mt-4">
+      <mat-chip-list
+        class="example-chip"
+        cdkDropList
+        cdkDropListOrientation="horizontal"
+      >
+        <span *ngFor="let player of players">
+          <mat-chip
+            class="example-box bg-orange-500"
+            cdkDrag
+            *ngIf="player.username.length > 0 && player.isActive"
+          >
+            {{ player.username }}
+          </mat-chip>
+        </span>
+      </mat-chip-list>
+    </div>
+  </div>
 </div>

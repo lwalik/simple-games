@@ -1,5 +1,15 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Inject } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { Observable, take } from 'rxjs';
+import { UserDTO } from '../../../application/ports/secondary/dto/user.dto';
+import {
+  GETS_ALL_USER_DTO,
+  GetsAllUserDtoPort,
+} from '../../../application/ports/secondary/dto/gets-all-user.dto-port';
+import {
+  SETS_STATE_USER_CONTEXT,
+  SetsStateUserContextPort,
+} from 'libs/core/src/lib/application/ports/secondary/context/sets-state-user.context-port';
 
 @Component({
   selector: 'lib-login-user',
@@ -12,12 +22,23 @@ export class LoginUserComponent {
     username: new FormControl('', Validators.required),
     password: new FormControl('', Validators.required),
   });
+  user$: Observable<UserDTO[]> = this._getsAllUserDto.getAll();
 
-  constructor() {}
+  constructor(
+    @Inject(GETS_ALL_USER_DTO) private _getsAllUserDto: GetsAllUserDtoPort,
+    @Inject(SETS_STATE_USER_CONTEXT)
+    private _setsStateUserContext: SetsStateUserContextPort
+  ) {}
 
   onLoginSubmited(loginUser: FormGroup): void {
     if (loginUser.invalid) {
       return;
     }
+
+    this._setsStateUserContext
+      .setState({
+        username: loginUser.get('username')?.value,
+      })
+      .pipe(take(1));
   }
 }
