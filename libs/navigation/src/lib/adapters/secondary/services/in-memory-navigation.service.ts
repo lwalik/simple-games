@@ -17,6 +17,14 @@ export class InMemoryNavigationService implements GetsAllNavLinkDtoPort {
         name: 'Games',
         url: 'games',
       },
+      {
+        name: 'Login',
+        url: 'login',
+      },
+      {
+        name: 'Logout',
+        url: '/',
+      },
     ]);
   }
 }

@@ -1,0 +1,26 @@
+<div class="w-4/5 bg-cyan-800 mx-auto mt-5 py-12 px-24 rounded-md fade-in">
+  <div class="w-full grid grid-cols-1 mb-4 mx-auto">
+    <p class="text-3xl text-center text-orange-300">
+      Waiting for all players...
+    </p>
+  </div>
+  <ul class="grid grid-cols-6 gap-4">
+    <li *ngFor="let player of players$ | async">
+      <div *ngIf="player.isActive">
+        <button class="w-full h-full h-14 w-16" mat-flat-button color="warn">
+          +
+        </button>
+      </div>
+      <div *ngIf="!player.isActive">
+        <button
+          class="w-full h-full h-14 w-16"
+          mat-flat-button
+          color="warn"
+          disabled
+        >
+          +
+        </button>
+      </div>
+    </li>
+  </ul>
+</div>
