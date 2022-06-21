@@ -1,28 +1,22 @@
-<div class="w-1/2 bg-slate-100 mx-auto mt-24 py-12 px-24 rounded-md fade-in">
+<div class="w-1/2 bg-cyan-800 mx-auto mt-24 py-12 px-24 rounded-md fade-in">
   <div class="w-full grid grid-cols-1 mb-4 mx-auto">
-    <p class="text-3xl text-center">Login</p>
+    <p class="text-3xl text-center text-orange-300">Login</p>
   </div>
   <form
-    [formGroup]="loginUser"
+    [formGroup]="userForm"
     class="example-form grid grid-cols-1 gap-4"
-    (ngSubmit)="onLoginSubmited(loginUser)"
+    (ngSubmit)="onLoginSubmitted(userForm)"
   >
     <mat-form-field class="example-full-width" appearance="fill">
       <mat-label>Email</mat-label>
-      <input type="email" matInput value="" formControlName="email" />
+      <input type="text" matInput value="" formControlName="email" />
     </mat-form-field>
     <mat-form-field class="example-full-width" appearance="fill">
       <mat-label>Password</mat-label>
       <input type="password" matInput value="" formControlName="password" />
     </mat-form-field>
 
-    <button
-      type="submit"
-      mat-raised-button
-      color="primary"
-      [disabled]="loginUser.invalid"
-    >
-      Login
-    </button>
+    <button type="submit" mat-raised-button color="primary">Login</button>
   </form>
+  <p>{{ test$ | async | json }}</p>
 </div>

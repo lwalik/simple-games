@@ -12,6 +12,7 @@ import {
   InMemoryNavigationServiceModule,
   NavComponentModule,
 } from '@navigation';
+import { InMemoryUserContextStorageModule } from '@core';
 
 @NgModule({
   declarations: [AppComponent],
@@ -24,6 +25,7 @@ import {
     MatButtonModule,
     NavComponentModule,
     InMemoryNavigationServiceModule,
+    InMemoryUserContextStorageModule,
   ],
   providers: [],
   bootstrap: [AppComponent],

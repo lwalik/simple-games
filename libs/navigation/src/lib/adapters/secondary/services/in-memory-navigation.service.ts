@@ -5,18 +5,31 @@ import { NavLinkDTO } from '../../../application/ports/secondary/dto/nav-link.dt
 
 @Injectable()
 export class InMemoryNavigationService implements GetsAllNavLinkDtoPort {
+  private _data = [
+    {
+      name: 'Home',
+      url: '/',
+      isActive: true,
+    },
+    {
+      name: 'Games',
+      url: 'games',
+      isActive: true,
+    },
+    {
+      name: 'Login',
+      url: 'login',
+      isActive: true,
+    },
+    {
+      name: 'Logout',
+      url: '/',
+      isActive: true,
+    },
+  ];
   constructor() {}
 
   getAll(): Observable<NavLinkDTO[]> {
-    return of([
-      {
-        name: 'Home',
-        url: '/',
-      },
-      {
-        name: 'Games',
-        url: 'games',
-      },
-    ]);
+    return of([...this._data]);
   }
 }

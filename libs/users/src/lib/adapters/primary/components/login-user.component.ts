@@ -1,23 +1,53 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { FormControl, FormGroup, Validators } from '@angular/forms';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  Inject,
+  ViewEncapsulation,
+} from '@angular/core';
+import { AngularFireAuth } from '@angular/fire/compat/auth';
+import { FormControl, FormGroup } from '@angular/forms';
+import { of, switchMap } from 'rxjs';
+import {
+  LOGIN_COMMAND,
+  LoginCommandPort,
+} from '../../../application/ports/primary/command/login.command-port';
 
 @Component({
   selector: 'lib-login-user',
   templateUrl: './login-user.component.html',
-  styleUrls: ['../../../../assets/styles/animations.scss'],
+  encapsulation: ViewEncapsulation.None,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class LoginUserComponent {
-  readonly loginUser: FormGroup = new FormGroup({
-    email: new FormControl('', Validators.required),
-    password: new FormControl('', Validators.required),
+  readonly userForm: FormGroup = new FormGroup({
+    email: new FormControl(),
+    password: new FormControl(),
   });
 
-  constructor() {}
+  test$ = this._auth.user.pipe(
+    switchMap((user) => {
+      return of({
+        username: user?.displayName,
+        email: user?.email,
+      });
+    })
+  );
 
-  onLoginSubmited(loginUser: FormGroup): void {
-    if (loginUser.invalid) {
+  constructor(
+    @Inject(LOGIN_COMMAND) private _loginCommand: LoginCommandPort,
+    private _auth: AngularFireAuth
+  ) {}
+
+  onLoginSubmitted(userForm: FormGroup): void {
+    if (userForm.invalid) {
       return;
     }
+
+    this._loginCommand
+      .login({
+        email: userForm.get('email')?.value,
+        password: userForm.get('password')?.value,
+      })
+      .subscribe();
   }
 }

@@ -1,5 +1,5 @@
 export interface PlayerDTO {
   readonly id: string;
   readonly username: string;
-  readonly password: string;
+  readonly isActive: boolean;
 }

@@ -17,7 +17,9 @@
     "paths": {
       "@rock-paper-scissors": ["libs/rock-paper-scissors/src/index.ts"],
       "@navigation": ["libs/navigation/src/index.ts"],
-      "@users": ["libs/users/src/index.ts"]
+      "@users": ["libs/users/src/index.ts"],
+      "@games-library": ["libs/games-library/src/index.ts"],
+      "@core": ["libs/core/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]
