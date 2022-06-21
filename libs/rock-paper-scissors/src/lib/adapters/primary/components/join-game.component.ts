@@ -56,7 +56,7 @@ export class JoinGameComponent {
       .set({
         id: player.id,
         isActive: !player.isActive,
-        username: context.username,
+        username: context.email,
       })
       .subscribe();
   }
