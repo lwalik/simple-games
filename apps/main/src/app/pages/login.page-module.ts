@@ -1,7 +1,11 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
-import { FirebaseUsersServiceModule, LoginUserComponentModule } from '@users';
+import {
+  FirebaseUsersServiceModule,
+  LoginUserComponentModule,
+  UserStateModule,
+} from '@users';
 import { LoginPage } from './login.page';
 
 @NgModule({
@@ -16,6 +20,7 @@ import { LoginPage } from './login.page';
     ]),
     LoginUserComponentModule,
     FirebaseUsersServiceModule,
+    UserStateModule,
   ],
   declarations: [LoginPage],
   providers: [],

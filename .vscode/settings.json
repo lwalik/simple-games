@@ -1,5 +1,7 @@
 {
   "cSpell.language": "en,pl",
   "lowgular.features.legacy": true,
-  "lowgular.features.experimental": true
+  "lowgular.features.experimental": true,
+  "lowgular.libFolder": "libs",
+  "lowgular.tsConfigFilePath": "tsconfig.base.json"
 }

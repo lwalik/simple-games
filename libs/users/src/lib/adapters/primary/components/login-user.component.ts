@@ -1,44 +1,53 @@
-import { ChangeDetectionStrategy, Component, Inject } from '@angular/core';
-import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { Observable, take } from 'rxjs';
-import { UserDTO } from '../../../application/ports/secondary/dto/user.dto';
 import {
-  GETS_ALL_USER_DTO,
-  GetsAllUserDtoPort,
-} from '../../../application/ports/secondary/dto/gets-all-user.dto-port';
+  ChangeDetectionStrategy,
+  Component,
+  Inject,
+  ViewEncapsulation,
+} from '@angular/core';
+import { AngularFireAuth } from '@angular/fire/compat/auth';
+import { FormControl, FormGroup } from '@angular/forms';
+import { of, switchMap } from 'rxjs';
 import {
-  SETS_STATE_USER_CONTEXT,
-  SetsStateUserContextPort,
-} from 'libs/core/src/lib/application/ports/secondary/context/sets-state-user.context-port';
+  LOGIN_COMMAND,
+  LoginCommandPort,
+} from '../../../application/ports/primary/command/login.command-port';
 
 @Component({
   selector: 'lib-login-user',
   templateUrl: './login-user.component.html',
-  styleUrls: ['../../../../assets/styles/animations.scss'],
+  encapsulation: ViewEncapsulation.None,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class LoginUserComponent {
-  readonly loginUser: FormGroup = new FormGroup({
-    username: new FormControl('', Validators.required),
-    password: new FormControl('', Validators.required),
+  readonly userForm: FormGroup = new FormGroup({
+    email: new FormControl(),
+    password: new FormControl(),
   });
-  user$: Observable<UserDTO[]> = this._getsAllUserDto.getAll();
+
+  test$ = this._auth.user.pipe(
+    switchMap((user) => {
+      return of({
+        username: user?.displayName,
+        email: user?.email,
+      });
+    })
+  );
 
   constructor(
-    @Inject(GETS_ALL_USER_DTO) private _getsAllUserDto: GetsAllUserDtoPort,
-    @Inject(SETS_STATE_USER_CONTEXT)
-    private _setsStateUserContext: SetsStateUserContextPort
+    @Inject(LOGIN_COMMAND) private _loginCommand: LoginCommandPort,
+    private _auth: AngularFireAuth
   ) {}
 
-  onLoginSubmited(loginUser: FormGroup): void {
-    if (loginUser.invalid) {
+  onLoginSubmitted(userForm: FormGroup): void {
+    if (userForm.invalid) {
       return;
     }
 
-    this._setsStateUserContext
-      .setState({
-        username: loginUser.get('username')?.value,
+    this._loginCommand
+      .login({
+        email: userForm.get('email')?.value,
+        password: userForm.get('password')?.value,
       })
-      .pipe(take(1));
+      .subscribe();
   }
 }

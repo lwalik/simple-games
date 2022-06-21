@@ -1,7 +1,26 @@
 <div class="flex items-center h-12 text-sm text-white mt-4 font-light">
-  <ul class="w-full flex justify-end gap-4">
+  <ul class="w-full flex justify-end gap-8">
     <li *ngFor="let link of navLinks$ | async" class="">
-      <a class="mx-2 px-2 hover:font-normal" [routerLink]="link.url">
+      <a
+        *ngIf="link.name === 'Login' && !(isUser$ | async)"
+        class="hover:font-normal"
+        [routerLink]="link.url"
+      >
+        {{ link.name }}
+      </a>
+      <a
+        *ngIf="link.name === 'Logout' && (isUser$ | async)"
+        class="hover:font-normal"
+        (click)="onLogOutButtonClicked()"
+        [routerLink]="link.url"
+      >
+        {{ link.name }}
+      </a>
+      <a
+        *ngIf="link.name !== 'Login' && link.name !== 'Logout'"
+        class="hover:font-normal"
+        [routerLink]="link.url"
+      >
         {{ link.name }}
       </a>
     </li>
