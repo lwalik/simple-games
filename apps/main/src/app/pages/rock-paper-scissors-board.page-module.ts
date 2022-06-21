@@ -1,10 +1,7 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
-import {
-  FirebasePlayersServiceModule,
-  JoinGameComponentModule,
-} from '@rock-paper-scissors';
+import { BoardComponentModule, FirebasePlayersServiceModule, JoinGameComponentModule } from '@rock-paper-scissors';
 import { RockPaperScissorsBoardPage } from './rock-paper-scissors-board.page';
 
 @NgModule({
@@ -18,6 +15,7 @@ import { RockPaperScissorsBoardPage } from './rock-paper-scissors-board.page';
     ]),
     JoinGameComponentModule,
     FirebasePlayersServiceModule,
+    BoardComponentModule
   ],
   declarations: [RockPaperScissorsBoardPage],
   providers: [],
