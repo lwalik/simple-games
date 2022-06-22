@@ -8,11 +8,13 @@ import { AngularFirestoreModule } from '@angular/fire/compat/firestore';
 import { MatButtonModule } from '@angular/material/button';
 import { AppRoutingModule } from './app-routing.module';
 import { environment } from '../environments/environment';
-import {
-  InMemoryNavigationServiceModule,
-  NavComponentModule,
-} from '@navigation';
+import { InMemoryNavigationServiceModule } from '@navigation';
 import { InMemoryUserContextStorageModule } from '@core';
+import {
+  FirebaseUsersServiceModule,
+  LoginUserResolverModule,
+  UserStateModule,
+} from '@users';
 
 @NgModule({
   declarations: [AppComponent],
@@ -23,9 +25,11 @@ import { InMemoryUserContextStorageModule } from '@core';
     AngularFireModule.initializeApp(environment.firebaseConfig),
     AngularFirestoreModule,
     MatButtonModule,
-    NavComponentModule,
     InMemoryNavigationServiceModule,
     InMemoryUserContextStorageModule,
+    FirebaseUsersServiceModule,
+    UserStateModule,
+    LoginUserResolverModule,
   ],
   providers: [],
   bootstrap: [AppComponent],
