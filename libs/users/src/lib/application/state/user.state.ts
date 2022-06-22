@@ -10,9 +10,12 @@ import {
   SETS_STATE_USER_CONTEXT,
   SetsStateUserContextPort,
 } from 'libs/core/src/lib/application/ports/secondary/context/sets-state-user.context-port';
+import { SetCurrentUserCommandPort } from '../ports/primary/command/set-current-user.command-port';
+import { SetCurrentUserCommand } from '../ports/primary/command/set-current-user.command';
+import { AngularFireAuth } from '@angular/fire/compat/auth';
 
 @Injectable()
-export class UserState implements LoginCommandPort {
+export class UserState implements LoginCommandPort, SetCurrentUserCommandPort {
   constructor(
     @Inject(SETS_USER_DTO) private _setsUserDto: SetsUserDtoPort,
     @Inject(SETS_STATE_USER_CONTEXT)
@@ -30,5 +33,9 @@ export class UserState implements LoginCommandPort {
           this._setsStateUserContext.setState({ email: command.email })
         )
       );
+  }
+
+  setCurrentUser(command: SetCurrentUserCommand): Observable<void> {
+    return this._setsStateUserContext.setState({ email: command.username });
   }
 }
