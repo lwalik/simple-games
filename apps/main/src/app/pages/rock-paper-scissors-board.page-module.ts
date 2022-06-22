@@ -1,12 +1,17 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
-import { BoardComponentModule, FirebasePlayersServiceModule, JoinGameComponentModule } from '@rock-paper-scissors';
+import {
+  BoardComponentModule,
+  FirebasePlayersServiceModule,
+  JoinGameComponentModule,
+} from '@rock-paper-scissors';
 import { RockPaperScissorsBoardPage } from './rock-paper-scissors-board.page';
 
 @NgModule({
   imports: [
     CommonModule,
+    RouterModule,
     RouterModule.forChild([
       {
         path: '',
@@ -15,7 +20,7 @@ import { RockPaperScissorsBoardPage } from './rock-paper-scissors-board.page';
     ]),
     JoinGameComponentModule,
     FirebasePlayersServiceModule,
-    BoardComponentModule
+    BoardComponentModule,
   ],
   declarations: [RockPaperScissorsBoardPage],
   providers: [],
