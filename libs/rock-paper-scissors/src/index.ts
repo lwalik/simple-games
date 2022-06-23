@@ -6,3 +6,4 @@ export * from './lib/adapters/primary/components/select-player-count.component-m
 export * from './lib/adapters/secondary/services/firebase-rps-board.service-module';
 export * from './lib/adapters/secondary/services/firebase-rps-board.service-module';
 export * from './lib/adapters/primary/components/set-username-modal.component-module';
+export * from './lib/adapters/secondary/storages/in-memory-game.storage-module';
