@@ -4,7 +4,10 @@ import { RouterModule } from '@angular/router';
 import {
   BoardComponentModule,
   FirebasePlayersServiceModule,
+  FirebaseRpsBoardServiceModule,
+  GameStateModule,
   JoinGameComponentModule,
+  SelectPlayerCountComponentModule,
 } from '@rock-paper-scissors';
 import { RockPaperScissorsBoardPage } from './rock-paper-scissors-board.page';
 
@@ -21,6 +24,9 @@ import { RockPaperScissorsBoardPage } from './rock-paper-scissors-board.page';
     JoinGameComponentModule,
     FirebasePlayersServiceModule,
     BoardComponentModule,
+    SelectPlayerCountComponentModule,
+    FirebaseRpsBoardServiceModule,
+    GameStateModule,
   ],
   declarations: [RockPaperScissorsBoardPage],
   providers: [],
