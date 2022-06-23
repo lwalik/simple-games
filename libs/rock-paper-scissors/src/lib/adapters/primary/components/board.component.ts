@@ -4,12 +4,13 @@ import {
   Inject,
   ViewEncapsulation,
 } from '@angular/core';
-import { filter, map, Observable } from 'rxjs';
-import { PlayerDTO } from '../../../application/ports/secondary/dto/player.dto';
+import { Observable, of, switchMap } from 'rxjs';
+import { RpsBoardDTO } from '../../../application/ports/secondary/dto/rps-board.dto';
 import {
-  GETS_ALL_PLAYER_DTO,
-  GetsAllPlayerDtoPort,
-} from '../../../application/ports/secondary/dto/gets-all-player.dto-port';
+  GETS_ONE_RPS_BOARD_DTO,
+  GetsOneRpsBoardDtoPort,
+} from '../../../application/ports/secondary/dto/gets-one-rps-board.dto-port';
+import { PlayerDTO } from '../../../application/ports/secondary/dto/player.dto';
 
 @Component({
   selector: 'lib-board',
@@ -18,15 +19,12 @@ import {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class BoardComponent {
-  players$: Observable<PlayerDTO[]> = this._getsAllPlayerDto
-    .getAll()
-    .pipe(
-      map((players) =>
-        players.filter((player) => !player.isActive && player.username)
-      )
-    );
+  players$: Observable<PlayerDTO[]> = this._getsOneRpsBoardDto
+    .getOne()
+    .pipe(switchMap((board) => of(board.players)));
 
   constructor(
-    @Inject(GETS_ALL_PLAYER_DTO) private _getsAllPlayerDto: GetsAllPlayerDtoPort
+    @Inject(GETS_ONE_RPS_BOARD_DTO)
+    private _getsOneRpsBoardDto: GetsOneRpsBoardDtoPort
   ) {}
 }

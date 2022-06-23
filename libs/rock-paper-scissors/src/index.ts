@@ -7,3 +7,4 @@ export * from './lib/adapters/secondary/services/firebase-rps-board.service-modu
 export * from './lib/adapters/secondary/services/firebase-rps-board.service-module';
 export * from './lib/adapters/primary/components/set-username-modal.component-module';
 export * from './lib/adapters/secondary/storages/in-memory-game.storage-module';
+export * from './lib/adapters/secondary/storages/in-memory-game.storage-module';

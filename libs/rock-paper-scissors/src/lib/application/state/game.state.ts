@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@angular/core';
-import { combineLatest, Observable, of } from 'rxjs';
-import { map, switchMap, take } from 'rxjs/operators';
+import { Observable, combineLatest, of } from 'rxjs';
+import { filter, map, switchMap, take } from 'rxjs/operators';
 import { SelectPlayersCountCommandPort } from '../ports/primary/command/select-players-count.command-port';
 import { GetsAllDisplayPlayersQueryPort } from '../ports/primary/query/gets-all-display-players.query-port';
 import { SetActivePlayerCommandPort } from '../ports/primary/command/set-active-player.command-port';
@@ -23,21 +23,27 @@ import {
   GETS_ONE_RPS_BOARD_DTO,
   GetsOneRpsBoardDtoPort,
 } from '../ports/secondary/dto/gets-one-rps-board.dto-port';
+import {
+  SELECTS_GAME_CONTEXT,
+  SelectsGameContextPort,
+} from '../ports/secondary/context/selects-game.context-port';
+import {
+  PATCHES_GAME_CONTEXT,
+  PatchesGameContextPort,
+} from '../ports/secondary/context/patches-game.context-port';
 import { SelectPlayersCountCommand } from '../ports/primary/command/select-players-count.command';
 import { SetActiveAllPlayersCommand } from '../ports/primary/command/set-active-all-players.command';
 import { JoinPlayerCommand } from '../ports/primary/command/join-player.command';
 import { SetUsernameCommand } from '../ports/primary/command/set-username.command';
-import { SetActivePlayersCommand } from '../ports/primary/command/set-active-player.command';
 import {
-  PatchesUserContextPort,
   PATCHES_USER_CONTEXT,
+  PatchesUserContextPort,
 } from 'libs/core/src/lib/application/ports/secondary/context/patches-user.context-port';
 import {
-  SelectsUserContextPort,
   SELECTS_USER_CONTEXT,
+  SelectsUserContextPort,
 } from 'libs/core/src/lib/application/ports/secondary/context/selects-user.context-port';
-import { PlayerDTO } from '../ports/secondary/dto/player.dto';
-import { UserContext } from 'libs/core/src/lib/application/ports/secondary/context/user.context';
+import { SetActivePlayersCommand } from '../ports/primary/command/set-active-player.command';
 
 @Injectable()
 export class GameState
@@ -59,7 +65,11 @@ export class GameState
     @Inject(PATCHES_USER_CONTEXT)
     private _patchesUserContext: PatchesUserContextPort,
     @Inject(SELECTS_USER_CONTEXT)
-    private _selectsUserContext: SelectsUserContextPort
+    private _selectsUserContext: SelectsUserContextPort,
+    @Inject(SELECTS_GAME_CONTEXT)
+    private _selectsGameContext: SelectsGameContextPort,
+    @Inject(PATCHES_GAME_CONTEXT)
+    private _patchesGameContext: PatchesGameContextPort
   ) {}
 
   selectPlayersCount(command: SelectPlayersCountCommand): Observable<void> {
