@@ -20,7 +20,7 @@ import {
 export class BoardComponent {
   players$: Observable<PlayerDTO[]> = this._getsAllPlayerDto
     .getAll()
-    .pipe(map((players) => players.filter((player) => player.isActive)));
+    .pipe(map((players) => players.filter((player) => !player.isActive)));
 
   constructor(
     @Inject(GETS_ALL_PLAYER_DTO) private _getsAllPlayerDto: GetsAllPlayerDtoPort
