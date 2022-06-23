@@ -1,4 +1,5 @@
 export interface UserContext {
-  readonly userId?: string;
+  readonly playerId?: string;
   readonly email: string;
+  readonly username?: string;
 }

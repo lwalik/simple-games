@@ -4,12 +4,9 @@ import {
   Inject,
   ViewEncapsulation,
 } from '@angular/core';
-import { Observable } from 'rxjs';
+import { Observable, take } from 'rxjs';
 import { PlayerDTO } from '../../../application/ports/secondary/dto/player.dto';
-import {
-  ADDS_PLAYER_DTO,
-  AddsPlayerDtoPort,
-} from '../../../application/ports/secondary/dto/adds-player.dto-port';
+import { RpsBoardDTO } from '../../../application/ports/secondary/dto/rps-board.dto';
 import {
   GETS_ALL_PLAYER_DTO,
   GetsAllPlayerDtoPort,
@@ -18,15 +15,18 @@ import {
   SETS_PLAYER_DTO,
   SetsPlayerDtoPort,
 } from '../../../application/ports/secondary/dto/sets-player.dto-port';
-import {
-  SETS_STATE_USER_CONTEXT,
-  SetsStateUserContextPort,
-} from 'libs/core/src/lib/application/ports/secondary/context/sets-state-user.context-port';
+
+import { UserContext } from 'libs/core/src/lib/application/ports/secondary/context/user.context';
 import {
   SELECTS_USER_CONTEXT,
   SelectsUserContextPort,
 } from 'libs/core/src/lib/application/ports/secondary/context/selects-user.context-port';
-import { UserContext } from 'libs/core/src/lib/application/ports/secondary/context/user.context';
+import { MatDialog } from '@angular/material/dialog';
+import { SetUsernameModalComponent } from './set-username-modal.component';
+import {
+  PatchesUserContextPort,
+  PATCHES_USER_CONTEXT,
+} from 'libs/core/src/lib/application/ports/secondary/context/patches-user.context-port';
 
 @Component({
   selector: 'lib-join-game',
@@ -41,23 +41,24 @@ export class JoinGameComponent {
     this._selectsUserContext.select();
 
   constructor(
-    @Inject(ADDS_PLAYER_DTO) private _addsPlayerDto: AddsPlayerDtoPort,
     @Inject(GETS_ALL_PLAYER_DTO)
     private _getsAllPlayerDto: GetsAllPlayerDtoPort,
     @Inject(SETS_PLAYER_DTO) private _setsPlayerDto: SetsPlayerDtoPort,
-    @Inject(SETS_STATE_USER_CONTEXT)
-    private _setsStateUserContext: SetsStateUserContextPort,
     @Inject(SELECTS_USER_CONTEXT)
-    private _selectsUserContext: SelectsUserContextPort
+    private _selectsUserContext: SelectsUserContextPort,
+    public dialog: MatDialog,
+    @Inject(PATCHES_USER_CONTEXT)
+    private _patchesUserContext: PatchesUserContextPort
   ) {}
 
-  onJoinButtonClicked(player: PlayerDTO, context: Partial<UserContext>): void {
-    this._setsPlayerDto
-      .set({
-        id: player.id,
-        isActive: !player.isActive,
-        username: context.email,
-      })
-      .subscribe();
+  onJoinButtonClicked(player: PlayerDTO): void {
+    this._patchesUserContext
+      .patch({ playerId: player.id })
+      .pipe(take(1))
+      .subscribe(() =>
+        this.dialog.open(SetUsernameModalComponent, {
+          width: '500px',
+        })
+      );
   }
 }

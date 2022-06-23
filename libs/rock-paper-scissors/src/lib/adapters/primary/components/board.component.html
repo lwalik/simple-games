@@ -1,5 +1,21 @@
-<ul class="mt-24 grid grid-cols-9 w-2/3 mx-auto gap-4">
+<!-- <ul class="mt-24 grid grid-cols-9 w-2/3 mx-auto gap-4">
   <li class="col-span-3" *ngFor="let player of players$ | async">
     {{ player.username }}
   </li>
-</ul>
+</ul> -->
+
+<div class="h-full w-4/5 grid grid-cols-2 gap-8 my-24 mx-auto">
+  <mat-card
+    class="example-card h-full p-0"
+    *ngFor="let player of players$ | async"
+  >
+    <mat-card-subtitle class="mb-0"
+      ><p class="px-4 text-center">{{ player.username }}</p></mat-card-subtitle
+    >
+
+    <div class="flex justify-center">
+      <button mat-raised-button color="accent" class="w-full">Ready</button>
+      <button mat-raised-button color="warn" class="w-full">Pick</button>
+    </div>
+  </mat-card>
+</div>

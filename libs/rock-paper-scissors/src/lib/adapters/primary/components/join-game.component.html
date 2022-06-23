@@ -1,21 +1,21 @@
 <div class="w-full grid grid-cols-1 mb-2 mx-auto">
-  <p class="text-2xl text-center text-orange-300">Waiting for all players...</p>
+  <p class="text-2xl text-center text-black">Waiting for all players...</p>
 </div>
 <div *ngIf="players$ | async as players">
-  <ul class="grid grid-cols-6 gap-4">
+  <ul class="grid grid-cols-3 lg:grid-cols-6 gap-4">
     <li *ngFor="let player of players">
       <div
         *ngIf="
-          !player.isActive &&
+          player.isActive &&
           (context$ | async)?.email?.length !== 0 &&
           (context$ | async)
         "
       >
         <button
-          class="w-full h-full h-14 w-16"
+          class="h-16 w-16"
           mat-flat-button
           color="warn"
-          (click)="onJoinButtonClicked(player, context)"
+          (click)="onJoinButtonClicked(player)"
           *ngIf="context$ | async as context"
         >
           +
@@ -23,39 +23,15 @@
       </div>
       <div
         *ngIf="
-          player.isActive ||
+          !player.isActive ||
           (context$ | async)?.email?.length === 0 ||
           !(context$ | async)
         "
       >
-        <button
-          class="w-full h-full h-14 w-16"
-          mat-flat-button
-          color="warn"
-          disabled
-        >
+        <button class="h-16 w-16" mat-flat-button color="warn" disabled>
           +
         </button>
       </div>
     </li>
   </ul>
-
-  <div class="mt-4">
-    <mat-chip-list
-      class="example-chip"
-      cdkDropList
-      cdkDropListOrientation="horizontal"
-    >
-      <span *ngFor="let player of players">
-        <mat-chip
-          class="example-box bg-orange-500"
-          cdkDrag
-          *ngIf="player.username.length > 0 && player.isActive"
-        >
-          {{ player.username }}
-        </mat-chip>
-      </span>
-    </mat-chip-list>
-  </div>
-  <p>{{ context$ | async | json }}</p>
 </div>

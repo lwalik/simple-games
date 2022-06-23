@@ -5,8 +5,8 @@ import {
   ViewEncapsulation,
 } from '@angular/core';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
-import { FormControl, FormGroup } from '@angular/forms';
-import { of, switchMap } from 'rxjs';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
 import {
   LOGIN_COMMAND,
   LoginCommandPort,
@@ -20,22 +20,13 @@ import {
 })
 export class LoginUserComponent {
   readonly userForm: FormGroup = new FormGroup({
-    email: new FormControl(),
-    password: new FormControl(),
+    email: new FormControl('', Validators.required),
+    password: new FormControl('', Validators.required),
   });
-
-  test$ = this._auth.user.pipe(
-    switchMap((user) => {
-      return of({
-        username: user?.displayName,
-        email: user?.email,
-      });
-    })
-  );
 
   constructor(
     @Inject(LOGIN_COMMAND) private _loginCommand: LoginCommandPort,
-    private _auth: AngularFireAuth
+    private _router: Router
   ) {}
 
   onLoginSubmitted(userForm: FormGroup): void {
@@ -48,6 +39,6 @@ export class LoginUserComponent {
         email: userForm.get('email')?.value,
         password: userForm.get('password')?.value,
       })
-      .subscribe();
+      .subscribe(() => this._router.navigate(['/']));
   }
 }

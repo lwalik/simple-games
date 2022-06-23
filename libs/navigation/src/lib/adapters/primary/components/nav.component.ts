@@ -29,11 +29,13 @@ import { AngularFireAuth } from '@angular/fire/compat/auth';
 })
 export class NavComponent {
   navLinks$: Observable<NavLinkDTO[]> = this._getsAllNavLinkDto.getAll();
-  context$: Observable<Partial<UserContext>> =
-    this._selectsUserContext.select();
-  isUser$: Observable<Boolean> = this._auth.user.pipe(
-    switchMap((user) => (user ? of(true) : of(false)))
-  );
+  context$: Observable<boolean> = this._selectsUserContext
+    .select()
+    .pipe(
+      switchMap((user) =>
+        user.email && user.email.length ? of(true) : of(false)
+      )
+    );
 
   constructor(
     @Inject(GETS_ALL_NAV_LINK_DTO)

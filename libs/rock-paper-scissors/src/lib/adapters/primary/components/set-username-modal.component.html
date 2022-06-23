@@ -1,0 +1,18 @@
+<form
+  [formGroup]="usernameForm"
+  class="example-form grid grid-cols-1 gap-4 mt-6 w-4/6 mx-auto"
+  (ngSubmit)="onUsernameSubmitted(usernameForm)"
+>
+  <mat-form-field class="example-full-width" appearance="fill">
+    <mat-label>Set your username</mat-label>
+    <input type="text" matInput formControlName="username" />
+  </mat-form-field>
+  <button
+    class="text-amber-400 mb-4"
+    type="submit"
+    mat-raised-button
+    color="primary"
+  >
+    Submit
+  </button>
+</form>

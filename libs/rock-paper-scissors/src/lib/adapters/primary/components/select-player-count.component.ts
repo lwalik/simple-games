@@ -1,0 +1,35 @@
+import {
+  ChangeDetectionStrategy,
+  Component,
+  Inject,
+  ViewEncapsulation,
+} from '@angular/core';
+import { FormControl, FormGroup } from '@angular/forms';
+import {
+  SELECT_PLAYERS_COUNT_COMMAND,
+  SelectPlayersCountCommandPort,
+} from '../../../application/ports/primary/command/select-players-count.command-port';
+import { SelectPlayersCountCommand } from '../../../application/ports/primary/command/select-players-count.command';
+
+@Component({
+  selector: 'lib-select-player-count',
+  templateUrl: './select-player-count.component.html',
+  encapsulation: ViewEncapsulation.None,
+  changeDetection: ChangeDetectionStrategy.OnPush,
+})
+export class SelectPlayerCountComponent {
+  readonly form: FormGroup = new FormGroup({ maxPlayers: new FormControl() });
+
+  constructor(
+    @Inject(SELECT_PLAYERS_COUNT_COMMAND)
+    private _selectPlayersCountCommand: SelectPlayersCountCommandPort
+  ) {}
+
+  onMaxPlayersSelected(form: FormGroup): void {
+    this._selectPlayersCountCommand
+      .selectPlayersCount(
+        new SelectPlayersCountCommand(form.get('maxPlayers')?.value as number)
+      )
+      .subscribe();
+  }
+}
