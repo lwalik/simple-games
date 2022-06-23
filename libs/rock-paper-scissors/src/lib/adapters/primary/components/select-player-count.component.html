@@ -1,0 +1,13 @@
+<div class="w-full flex items-center justify-center">
+  <form class="flex" [formGroup]="form" (change)="onMaxPlayersSelected(form)">
+    <p class="text-amber-500 pr-4">Choose a count of players</p>
+    <select class="form-select" formControlName="maxPlayers">
+      <option value="1">1</option>
+      <option value="2">2</option>
+      <option value="3">3</option>
+      <option value="4">4</option>
+      <option value="5">5</option>
+      <option value="6">6</option>
+    </select>
+  </form>
+</div>
