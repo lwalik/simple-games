@@ -8,6 +8,7 @@ import {
   GameStateModule,
   InMemoryGameStorageModule,
   JoinGameComponentModule,
+  QueuePlayersComponentModule,
   SelectPlayerCountComponentModule,
 } from '@rock-paper-scissors';
 import { RockPaperScissorsBoardPage } from './rock-paper-scissors-board.page';
@@ -28,6 +29,7 @@ import { RockPaperScissorsBoardPage } from './rock-paper-scissors-board.page';
     SelectPlayerCountComponentModule,
     FirebaseRpsBoardServiceModule,
     InMemoryGameStorageModule,
+    QueuePlayersComponentModule,
     GameStateModule,
   ],
   declarations: [RockPaperScissorsBoardPage],
