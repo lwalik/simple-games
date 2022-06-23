@@ -7,5 +7,5 @@ export const SELECTS_USER_CONTEXT = new InjectionToken<SelectsUserContextPort>(
 );
 
 export interface SelectsUserContextPort {
-  select(): Observable<Partial<UserContext>>;
+  select(): Observable<UserContext>;
 }

@@ -13,15 +13,13 @@ export class InMemoryUserContextStorage
     SelectsUserContextPort,
     PatchesUserContextPort
 {
-  private _subject: Subject<Partial<UserContext>> = new ReplaySubject<
-    Partial<UserContext>
-  >(1);
+  private _subject: Subject<UserContext> = new ReplaySubject<UserContext>(1);
 
   setState(state: UserContext): Observable<void> {
     return of(this._subject.next(state)).pipe(map(() => void 0));
   }
 
-  select(): Observable<Partial<UserContext>> {
+  select(): Observable<UserContext> {
     return this._subject.asObservable();
   }
 

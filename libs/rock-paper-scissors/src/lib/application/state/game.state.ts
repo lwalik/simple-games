@@ -132,10 +132,16 @@ export class GameState
         players.filter((item) => item.id === context.playerId)
       ),
       switchMap((player) =>
-        this._setsPlayerDto.set({
-          id: player.id,
-          username: command.username,
-        })
+        this._setsPlayerDto
+          .set({
+            id: player.id,
+            username: command.username,
+          })
+          .pipe(
+            switchMap(() =>
+              this._patchesUserContext.patch({ username: command.username })
+            )
+          )
       )
     );
   }
