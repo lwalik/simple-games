@@ -4,28 +4,24 @@ import {
   Inject,
   ViewEncapsulation,
 } from '@angular/core';
-import { AngularFireAuth } from '@angular/fire/compat/auth';
-import { MatDialog } from '@angular/material/dialog';
-import {
-  PatchesUserContextPort,
-  PATCHES_USER_CONTEXT,
-} from 'libs/core/src/lib/application/ports/secondary/context/patches-user.context-port';
-import {
-  SelectsUserContextPort,
-  SELECTS_USER_CONTEXT,
-} from 'libs/core/src/lib/application/ports/secondary/context/selects-user.context-port';
-import { UserContext } from 'libs/core/src/lib/application/ports/secondary/context/user.context';
-import { map, Observable, switchMap, take } from 'rxjs';
-import {
-  GetsAllPlayerDtoPort,
-  GETS_ALL_PLAYER_DTO,
-} from '../../../application/ports/secondary/dto/gets-all-player.dto-port';
+import { Observable } from 'rxjs';
 import { PlayerDTO } from '../../../application/ports/secondary/dto/player.dto';
 import {
-  SetsPlayerDtoPort,
-  SETS_PLAYER_DTO,
-} from '../../../application/ports/secondary/dto/sets-player.dto-port';
+  GETS_ALL_PLAYER_DTO,
+  GetsAllPlayerDtoPort,
+} from '../../../application/ports/secondary/dto/gets-all-player.dto-port';
+import {
+  TAKE_PLAYER_COMMAND,
+  TakePlayerCommandPort,
+} from '../../../application/ports/primary/command/take-player.command-port';
 import { SetUsernameModalComponent } from './set-username-modal.component';
+import { UserContext } from 'libs/core/src/lib/application/ports/secondary/context/user.context';
+import {
+  SELECTS_USER_CONTEXT,
+  SelectsUserContextPort,
+} from 'libs/core/src/lib/application/ports/secondary/context/selects-user.context-port';
+import { MatDialog } from '@angular/material/dialog';
+import { TakePlayerCommand } from '../../../application/ports/primary/command/take-player.command';
 
 @Component({
   selector: 'lib-queue-players',
@@ -42,19 +38,16 @@ export class QueuePlayersComponent {
   constructor(
     @Inject(GETS_ALL_PLAYER_DTO)
     private _getsAllPlayerDto: GetsAllPlayerDtoPort,
-    @Inject(SETS_PLAYER_DTO) private _setsPlayerDto: SetsPlayerDtoPort,
     @Inject(SELECTS_USER_CONTEXT)
     private _selectsUserContext: SelectsUserContextPort,
     public dialog: MatDialog,
-    @Inject(PATCHES_USER_CONTEXT)
-    private _patchesUserContext: PatchesUserContextPort,
-    private _auth: AngularFireAuth
+    @Inject(TAKE_PLAYER_COMMAND)
+    private _takePlayerCommand: TakePlayerCommandPort
   ) {}
 
-  onJoinButtonClicked(player: PlayerDTO): void {
-    this._patchesUserContext
-      .patch({ playerId: player.id })
-      .pipe(take(1))
+  onPlusButtonClicked(player: PlayerDTO): void {
+    this._takePlayerCommand
+      .takePlayer(new TakePlayerCommand(player))
       .subscribe(() =>
         this.dialog.open(SetUsernameModalComponent, {
           width: '500px',

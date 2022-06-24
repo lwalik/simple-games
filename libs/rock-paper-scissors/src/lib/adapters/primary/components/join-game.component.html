@@ -1,3 +1,10 @@
-<div class="mt-4 w-full flex justify-center">
-  <button class="w-36" mat-raised-button color="accent">Join</button>
+<div class="mt-4 w-full flex justify-center" *ngIf="isPlayer$ | async">
+  <button
+    class="w-36"
+    mat-raised-button
+    color="accent"
+    (click)="onJoinButtonClicked()"
+  >
+    Join
+  </button>
 </div>

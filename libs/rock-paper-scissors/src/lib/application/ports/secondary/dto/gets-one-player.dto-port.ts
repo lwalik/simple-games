@@ -7,5 +7,5 @@ export const GETS_ONE_PLAYER_DTO = new InjectionToken<GetsOnePlayerDtoPort>(
 );
 
 export interface GetsOnePlayerDtoPort {
-  getOne(): Observable<PlayerDTO>;
+  getOne(id: string): Observable<PlayerDTO>;
 }
