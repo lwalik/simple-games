@@ -9,6 +9,7 @@ import {
   InMemoryGameStorageModule,
   JoinGameComponentModule,
   QueuePlayersComponentModule,
+  ResetPlayersInGameComponentModule,
   SelectPlayerCountComponentModule,
 } from '@rock-paper-scissors';
 import { RockPaperScissorsBoardPage } from './rock-paper-scissors-board.page';
@@ -31,6 +32,7 @@ import { RockPaperScissorsBoardPage } from './rock-paper-scissors-board.page';
     InMemoryGameStorageModule,
     QueuePlayersComponentModule,
     GameStateModule,
+    ResetPlayersInGameComponentModule,
   ],
   declarations: [RockPaperScissorsBoardPage],
   providers: [],

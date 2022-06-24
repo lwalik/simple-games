@@ -5,15 +5,15 @@ import {
   ViewEncapsulation,
 } from '@angular/core';
 import { Observable } from 'rxjs';
-import { IsPlayerInContextQuery } from '../../../application/ports/primary/query/is-player-in-context.query';
+import { PlayerInContextQuery } from '../../../application/ports/primary/query/player-in-context.query';
 import {
   JOIN_PLAYER_COMMAND,
   JoinPlayerCommandPort,
 } from '../../../application/ports/primary/command/join-player.command-port';
 import {
-  GETS_CURRENT_IS_PLAYER_IN_CONTEXT_QUERY,
-  GetsCurrentIsPlayerInContextQueryPort,
-} from '../../../application/ports/primary/query/gets-current-is-player-in-context.query-port';
+  GETS_CURRENT_PLAYER_IN_CONTEXT_QUERY,
+  GetsCurrentPlayerInContextQueryPort,
+} from '../../../application/ports/primary/query/gets-current-player-in-context.query-port';
 import { JoinPlayerCommand } from '../../../application/ports/primary/command/join-player.command';
 
 @Component({
@@ -23,14 +23,14 @@ import { JoinPlayerCommand } from '../../../application/ports/primary/command/jo
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class JoinGameComponent {
-  isPlayer$: Observable<IsPlayerInContextQuery> =
-    this._getsCurrentIsPlayerInContextQuery.getCurrentIsPlayerInContextQuery();
+  player$: Observable<PlayerInContextQuery> =
+    this._getsCurrentPlayerInContextQuery.getCurrentPlayerInContextQuery();
 
   constructor(
     @Inject(JOIN_PLAYER_COMMAND)
     private _joinPlayerCommand: JoinPlayerCommandPort,
-    @Inject(GETS_CURRENT_IS_PLAYER_IN_CONTEXT_QUERY)
-    private _getsCurrentIsPlayerInContextQuery: GetsCurrentIsPlayerInContextQueryPort
+    @Inject(GETS_CURRENT_PLAYER_IN_CONTEXT_QUERY)
+    private _getsCurrentPlayerInContextQuery: GetsCurrentPlayerInContextQueryPort
   ) {}
 
   onJoinButtonClicked(): void {

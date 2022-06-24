@@ -7,7 +7,9 @@ import { SetActiveAllPlayersCommandPort } from '../ports/primary/command/set-act
 import { JoinPlayerCommandPort } from '../ports/primary/command/join-player.command-port';
 import { SetUsernameCommandPort } from '../ports/primary/command/set-username.command-port';
 import { TakePlayerCommandPort } from '../ports/primary/command/take-player.command-port';
-import { GetsCurrentIsPlayerInContextQueryPort } from '../ports/primary/query/gets-current-is-player-in-context.query-port';
+import { InitBoardCommandPort } from '../ports/primary/command/init-board.command-port';
+import { SwitchPlayerInContextStatusCommandPort } from '../ports/primary/command/switch-player-in-context-status.command-port';
+import { GetsCurrentPlayerInContextQueryPort } from '../ports/primary/query/gets-current-player-in-context.query-port';
 import {
   SETS_RPS_BOARD_DTO,
   SetsRpsBoardDtoPort,
@@ -39,9 +41,11 @@ import {
 import { SelectPlayersCountCommand } from '../ports/primary/command/select-players-count.command';
 import { SetActiveAllPlayersCommand } from '../ports/primary/command/set-active-all-players.command';
 import { JoinPlayerCommand } from '../ports/primary/command/join-player.command';
+import { SwitchPlayerInContextStatusCommand } from '../ports/primary/command/switch-player-in-context-status.command';
 import { SetUsernameCommand } from '../ports/primary/command/set-username.command';
 import { TakePlayerCommand } from '../ports/primary/command/take-player.command';
-import { IsPlayerInContextQuery } from '../ports/primary/query/is-player-in-context.query';
+import { InitBoardCommand } from '../ports/primary/command/init-board.command';
+import { PlayerInContextQuery } from '../ports/primary/query/player-in-context.query';
 import { GameContext } from '../ports/secondary/context/game.context';
 import { SetActivePlayersCommand } from '../ports/primary/command/set-active-player.command';
 
@@ -54,7 +58,9 @@ export class GameState
     JoinPlayerCommandPort,
     SetUsernameCommandPort,
     TakePlayerCommandPort,
-    GetsCurrentIsPlayerInContextQueryPort
+    InitBoardCommandPort,
+    SwitchPlayerInContextStatusCommandPort,
+    GetsCurrentPlayerInContextQueryPort
 {
   constructor(
     @Inject(SETS_RPS_BOARD_DTO) private _setsRpsBoardDto: SetsRpsBoardDtoPort,
@@ -107,16 +113,22 @@ export class GameState
   }
 
   joinPlayer(command: JoinPlayerCommand): Observable<void> {
-    return this._selectsGameContext.select().pipe(
-      take(1),
-      switchMap((context) =>
-        this._getsOneRpsBoardDto.getOne().pipe(
+    return this.switchPlayerInContextStatus(
+      new SwitchPlayerInContextStatusCommand()
+    ).pipe(
+      switchMap(() =>
+        this._selectsGameContext.select().pipe(
           take(1),
-          switchMap((board) =>
-            this._setsRpsBoardDto.set({
-              ...board,
-              players: [...board.players, context.player],
-            })
+          switchMap((context) =>
+            this._getsOneRpsBoardDto.getOne().pipe(
+              take(1),
+              switchMap((board) =>
+                this._setsRpsBoardDto.set({
+                  ...board,
+                  players: [...board.players, context.player],
+                })
+              )
+            )
           )
         )
       )
@@ -135,17 +147,51 @@ export class GameState
   }
 
   takePlayer(command: TakePlayerCommand): Observable<void> {
-    return this._setsStateGameContext.setState({ player: command.player });
+    return this._setsStateGameContext.setState({
+      player: command.player,
+    });
   }
 
-  getCurrentIsPlayerInContextQuery(): Observable<IsPlayerInContextQuery> {
+  initBoard(command: InitBoardCommand): Observable<void> {
+    return this._getsOneRpsBoardDto.getOne().pipe(
+      take(1),
+      switchMap((board) => this._setsRpsBoardDto.set({ ...board, players: [] }))
+    );
+  }
+
+  switchPlayerInContextStatus(
+    command: SwitchPlayerInContextStatusCommand
+  ): Observable<void> {
+    return this._selectsGameContext.select().pipe(
+      take(1),
+      switchMap((context) =>
+        this._setsStateGameContext
+          .setState({
+            ...context,
+            player: { ...context.player, isActive: !context.player.isActive },
+          })
+          .pipe(
+            take(1),
+            switchMap(() =>
+              this._setsPlayerDto.set({
+                id: context.player.id,
+                isActive: !context.player.isActive,
+              })
+            )
+          )
+      )
+    );
+  }
+
+  getCurrentPlayerInContextQuery(): Observable<PlayerInContextQuery> {
     return this._selectsGameContext
       .select()
       .pipe(
         map(
-          (gameContext: GameContext): IsPlayerInContextQuery =>
-            new IsPlayerInContextQuery(
-              gameContext.player && gameContext.player.username ? true : false
+          (gameContext: GameContext): PlayerInContextQuery =>
+            new PlayerInContextQuery(
+              gameContext.player.username,
+              gameContext.player.isActive
             )
         )
       );
