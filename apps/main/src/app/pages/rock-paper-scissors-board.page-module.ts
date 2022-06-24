@@ -6,7 +6,10 @@ import {
   FirebasePlayersServiceModule,
   FirebaseRpsBoardServiceModule,
   GameStateModule,
+  InMemoryGameStorageModule,
   JoinGameComponentModule,
+  QueuePlayersComponentModule,
+  ResetPlayersInGameComponentModule,
   SelectPlayerCountComponentModule,
 } from '@rock-paper-scissors';
 import { RockPaperScissorsBoardPage } from './rock-paper-scissors-board.page';
@@ -26,7 +29,10 @@ import { RockPaperScissorsBoardPage } from './rock-paper-scissors-board.page';
     BoardComponentModule,
     SelectPlayerCountComponentModule,
     FirebaseRpsBoardServiceModule,
+    InMemoryGameStorageModule,
+    QueuePlayersComponentModule,
     GameStateModule,
+    ResetPlayersInGameComponentModule,
   ],
   declarations: [RockPaperScissorsBoardPage],
   providers: [],

@@ -1,12 +1,12 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { JoinGameComponent } from './join-game.component';
+import { ResetPlayersInGameComponent } from './reset-players-in-game.component';
 import { MatButtonModule } from '@angular/material/button';
 
 @NgModule({
   imports: [CommonModule, MatButtonModule],
-  declarations: [JoinGameComponent],
+  declarations: [ResetPlayersInGameComponent],
   providers: [],
-  exports: [JoinGameComponent],
+  exports: [ResetPlayersInGameComponent],
 })
-export class JoinGameComponentModule {}
+export class ResetPlayersInGameComponentModule {}

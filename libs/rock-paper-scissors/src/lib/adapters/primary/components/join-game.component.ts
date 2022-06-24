@@ -4,29 +4,17 @@ import {
   Inject,
   ViewEncapsulation,
 } from '@angular/core';
-import { Observable, take } from 'rxjs';
-import { PlayerDTO } from '../../../application/ports/secondary/dto/player.dto';
-import { RpsBoardDTO } from '../../../application/ports/secondary/dto/rps-board.dto';
+import { Observable } from 'rxjs';
+import { PlayerInContextQuery } from '../../../application/ports/primary/query/player-in-context.query';
 import {
-  GETS_ALL_PLAYER_DTO,
-  GetsAllPlayerDtoPort,
-} from '../../../application/ports/secondary/dto/gets-all-player.dto-port';
+  JOIN_PLAYER_COMMAND,
+  JoinPlayerCommandPort,
+} from '../../../application/ports/primary/command/join-player.command-port';
 import {
-  SETS_PLAYER_DTO,
-  SetsPlayerDtoPort,
-} from '../../../application/ports/secondary/dto/sets-player.dto-port';
-
-import { UserContext } from 'libs/core/src/lib/application/ports/secondary/context/user.context';
-import {
-  SELECTS_USER_CONTEXT,
-  SelectsUserContextPort,
-} from 'libs/core/src/lib/application/ports/secondary/context/selects-user.context-port';
-import { MatDialog } from '@angular/material/dialog';
-import { SetUsernameModalComponent } from './set-username-modal.component';
-import {
-  PatchesUserContextPort,
-  PATCHES_USER_CONTEXT,
-} from 'libs/core/src/lib/application/ports/secondary/context/patches-user.context-port';
+  GETS_CURRENT_PLAYER_IN_CONTEXT_QUERY,
+  GetsCurrentPlayerInContextQueryPort,
+} from '../../../application/ports/primary/query/gets-current-player-in-context.query-port';
+import { JoinPlayerCommand } from '../../../application/ports/primary/command/join-player.command';
 
 @Component({
   selector: 'lib-join-game',
@@ -35,30 +23,17 @@ import {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class JoinGameComponent {
-  players$: Observable<PlayerDTO[]> = this._getsAllPlayerDto.getAll();
-
-  context$: Observable<Partial<UserContext>> =
-    this._selectsUserContext.select();
+  player$: Observable<PlayerInContextQuery> =
+    this._getsCurrentPlayerInContextQuery.getCurrentPlayerInContextQuery();
 
   constructor(
-    @Inject(GETS_ALL_PLAYER_DTO)
-    private _getsAllPlayerDto: GetsAllPlayerDtoPort,
-    @Inject(SETS_PLAYER_DTO) private _setsPlayerDto: SetsPlayerDtoPort,
-    @Inject(SELECTS_USER_CONTEXT)
-    private _selectsUserContext: SelectsUserContextPort,
-    public dialog: MatDialog,
-    @Inject(PATCHES_USER_CONTEXT)
-    private _patchesUserContext: PatchesUserContextPort
+    @Inject(JOIN_PLAYER_COMMAND)
+    private _joinPlayerCommand: JoinPlayerCommandPort,
+    @Inject(GETS_CURRENT_PLAYER_IN_CONTEXT_QUERY)
+    private _getsCurrentPlayerInContextQuery: GetsCurrentPlayerInContextQueryPort
   ) {}
 
-  onJoinButtonClicked(player: PlayerDTO): void {
-    this._patchesUserContext
-      .patch({ playerId: player.id })
-      .pipe(take(1))
-      .subscribe(() =>
-        this.dialog.open(SetUsernameModalComponent, {
-          width: '500px',
-        })
-      );
+  onJoinButtonClicked(): void {
+    this._joinPlayerCommand.joinPlayer(new JoinPlayerCommand()).subscribe();
   }
 }

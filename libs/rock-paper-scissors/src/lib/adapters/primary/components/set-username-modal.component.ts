@@ -32,6 +32,6 @@ export class SetUsernameModalComponent {
   onUsernameSubmitted(usernameForm: FormGroup): void {
     this._setUsernameCommand
       .setUsername(new SetUsernameCommand(usernameForm.get('username')?.value))
-      .subscribe();
+      .subscribe(() => this.dialogRef.close(''));
   }
 }
