@@ -9,6 +9,12 @@ import { TAKE_PLAYER_COMMAND } from '../ports/primary/command/take-player.comman
 import { INIT_BOARD_COMMAND } from '../ports/primary/command/init-board.command-port';
 import { SWITCH_PLAYER_IN_CONTEXT_STATUS_COMMAND } from '../ports/primary/command/switch-player-in-context-status.command-port';
 import { GETS_CURRENT_PLAYER_IN_CONTEXT_QUERY } from '../ports/primary/query/gets-current-player-in-context.query-port';
+import { SET_CHOICE_COMMAND } from '../ports/primary/command/set-choice.command-port';
+import { SWITCH_READY_STATUS_COMMAND } from '../ports/primary/command/switch-ready-status.command-port';
+import { RESET_QUEUE_STATUS_COMMAND } from '../ports/primary/command/reset-queue-status.command-port';
+import { SET_OTHERS_PLAYER_IN_GAME_COMMAND } from '../ports/primary/command/set-others-player-in-game.command-port';
+import { GETS_CURRENT_DISPLAY_BOARD_QUERY } from '../ports/primary/query/gets-current-display-board.query-port';
+import { GETS_CURRENT_IN_GAME_QUERY } from '../ports/primary/query/gets-current-in-game.query-port';
 
 @NgModule({
   imports: [],
@@ -27,6 +33,12 @@ import { GETS_CURRENT_PLAYER_IN_CONTEXT_QUERY } from '../ports/primary/query/get
       useExisting: GameState,
     },
     { provide: GETS_CURRENT_PLAYER_IN_CONTEXT_QUERY, useExisting: GameState },
+    { provide: SET_CHOICE_COMMAND, useExisting: GameState },
+    { provide: SWITCH_READY_STATUS_COMMAND, useExisting: GameState },
+    { provide: RESET_QUEUE_STATUS_COMMAND, useExisting: GameState },
+    { provide: SET_OTHERS_PLAYER_IN_GAME_COMMAND, useExisting: GameState },
+    { provide: GETS_CURRENT_DISPLAY_BOARD_QUERY, useExisting: GameState },
+    { provide: GETS_CURRENT_IN_GAME_QUERY, useExisting: GameState },
   ],
   exports: [],
 })
