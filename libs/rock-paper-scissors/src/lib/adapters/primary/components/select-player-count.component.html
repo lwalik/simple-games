@@ -1,4 +1,4 @@
-<div class="w-full flex items-center justify-center">
+<div class="w-full flex items-center justify-center" *ngIf="isUser$ | async">
   <form class="flex" [formGroup]="form" (change)="onMaxPlayersSelected(form)">
     <p class="text-amber-500 pr-4">Choose a count of players</p>
     <select class="form-select" formControlName="maxPlayers">
