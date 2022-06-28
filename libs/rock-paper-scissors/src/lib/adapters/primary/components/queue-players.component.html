@@ -7,8 +7,9 @@
       <div
         *ngIf="
           player.isActive &&
-          (context$ | async)?.email?.length !== 0 &&
-          (context$ | async)
+            (userContext$ | async)?.email?.length !== 0 &&
+            ((gameContext$ | async)?.queueStatus || !(gameContext$ | async));
+          else disabledButton
         "
       >
         <button
@@ -20,17 +21,11 @@
           +
         </button>
       </div>
-      <div
-        *ngIf="
-          !player.isActive ||
-          (context$ | async)?.email?.length === 0 ||
-          !(context$ | async)
-        "
-      >
+      <ng-template #disabledButton>
         <button class="h-16 w-16" mat-flat-button color="warn" disabled>
           +
         </button>
-      </div>
+      </ng-template>
     </li>
   </ul>
 </div>

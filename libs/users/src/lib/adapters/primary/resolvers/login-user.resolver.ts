@@ -20,7 +20,6 @@ import { SetCurrentUserCommand } from '../../../application/ports/primary/comman
 @Injectable()
 export class LoginUserResolver implements Resolve<boolean> {
   constructor(
-    @Inject(SETS_USER_DTO) private _setsUserDto: SetsUserDtoPort,
     private _auth: AngularFireAuth,
     @Inject(SET_CURRENT_USER_COMMAND)
     private _setCurrentUserCommand: SetCurrentUserCommandPort
