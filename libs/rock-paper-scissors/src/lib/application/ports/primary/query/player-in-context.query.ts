@@ -1,6 +1,5 @@
+import { PlayerDTO } from '../../secondary/dto/player.dto';
+
 export class PlayerInContextQuery {
-  constructor(
-    public readonly username: string,
-    public readonly isActive: boolean
-  ) {}
+  constructor(public readonly current: PlayerDTO) {}
 }
