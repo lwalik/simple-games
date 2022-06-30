@@ -23,9 +23,14 @@ import {
   GETS_CURRENT_IN_GAME_QUERY,
   GetsCurrentInGameQueryPort,
 } from '../../../application/ports/primary/query/gets-current-in-game.query-port';
+import {
+  SWITCH_PLAYER_IN_CONTEXT_STATUS_COMMAND,
+  SwitchPlayerInContextStatusCommandPort,
+} from '../../../application/ports/primary/command/switch-player-in-context-status.command-port';
 import { PlayerDTO } from '../../../application/ports/secondary/dto/player.dto';
 import { SetOthersPlayerInGameCommand } from '../../../application/ports/primary/command/set-others-player-in-game.command';
 import { JoinPlayerCommand } from '../../../application/ports/primary/command/join-player.command';
+import { SwitchPlayerInContextStatusCommand } from '../../../application/ports/primary/command/switch-player-in-context-status.command';
 
 @Component({
   selector: 'lib-join-game',
@@ -47,14 +52,24 @@ export class JoinGameComponent {
     @Inject(SET_OTHERS_PLAYER_IN_GAME_COMMAND)
     private _setOthersPlayerInGameCommand: SetOthersPlayerInGameCommandPort,
     @Inject(GETS_CURRENT_IN_GAME_QUERY)
-    private _getsCurrentInGameQuery: GetsCurrentInGameQueryPort
+    private _getsCurrentInGameQuery: GetsCurrentInGameQueryPort,
+    @Inject(SWITCH_PLAYER_IN_CONTEXT_STATUS_COMMAND)
+    private _switchPlayerInContextStatusCommand: SwitchPlayerInContextStatusCommandPort
   ) {}
 
   onJoinButtonClicked(player: PlayerDTO): void {
     this._setOthersPlayerInGameCommand
       .setOthersPlayerInGame(new SetOthersPlayerInGameCommand(player))
       .subscribe(() =>
-        this._joinPlayerCommand.joinPlayer(new JoinPlayerCommand()).subscribe()
+        this._joinPlayerCommand
+          .joinPlayer(new JoinPlayerCommand())
+          .subscribe(() =>
+            this._switchPlayerInContextStatusCommand
+              .switchPlayerInContextStatus(
+                new SwitchPlayerInContextStatusCommand()
+              )
+              .subscribe()
+          )
       );
   }
 }

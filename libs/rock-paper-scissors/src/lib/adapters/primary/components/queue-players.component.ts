@@ -4,8 +4,11 @@ import {
   Inject,
   ViewEncapsulation,
 } from '@angular/core';
-import { Observable, take } from 'rxjs';
+import { Observable } from 'rxjs';
+import { take } from 'rxjs/operators';
+
 import { PlayerDTO } from '../../../application/ports/secondary/dto/player.dto';
+import { GameContext } from '../../../application/ports/secondary/context/game.context';
 import {
   GETS_ALL_PLAYER_DTO,
   GetsAllPlayerDtoPort,
@@ -14,6 +17,11 @@ import {
   TAKE_PLAYER_COMMAND,
   TakePlayerCommandPort,
 } from '../../../application/ports/primary/command/take-player.command-port';
+import {
+  SELECTS_GAME_CONTEXT,
+  SelectsGameContextPort,
+} from '../../../application/ports/secondary/context/selects-game.context-port';
+import { TakePlayerCommand } from '../../../application/ports/primary/command/take-player.command';
 import { SetUsernameModalComponent } from './set-username-modal.component';
 import { UserContext } from 'libs/core/src/lib/application/ports/secondary/context/user.context';
 import {
@@ -21,12 +29,6 @@ import {
   SelectsUserContextPort,
 } from 'libs/core/src/lib/application/ports/secondary/context/selects-user.context-port';
 import { MatDialog } from '@angular/material/dialog';
-import { TakePlayerCommand } from '../../../application/ports/primary/command/take-player.command';
-import { GameContext } from '../../../application/ports/secondary/context/game.context';
-import {
-  SelectsGameContextPort,
-  SELECTS_GAME_CONTEXT,
-} from '../../../application/ports/secondary/context/selects-game.context-port';
 
 @Component({
   selector: 'lib-queue-players',
@@ -37,6 +39,7 @@ import {
 export class QueuePlayersComponent {
   players$: Observable<PlayerDTO[]> = this._getsAllPlayerDto.getAll();
 
+  //TODO change the rule for enable queue
   userContext$: Observable<Partial<UserContext>> =
     this._selectsUserContext.select();
 

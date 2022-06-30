@@ -1,11 +1,5 @@
-<!-- <ul class="mt-24 grid grid-cols-9 w-2/3 mx-auto gap-4">
-  <li class="col-span-3" *ngFor="let player of players$ | async">
-    {{ player.username }}
-  </li>
-</ul> -->
-
 <div
-  class="h-full w-4/5 grid grid-cols-3 gap-8 mt-24 mx-auto"
+  class="h-full w-4/5 grid md:grid-cols-3 gap-8 mt-24 mx-auto grid-cols-1"
   *ngIf="(players$ | async)?.isVisible"
 >
   <div
@@ -61,7 +55,7 @@
   </div>
 
   <div
-    class="col-span-2 grid grid-cols-2 gap-4"
+    class="col-span-2 grid grid-cols-2 gap-4 place-content-around"
     *ngIf="(players$ | async)?.otherPlayers as others"
   >
     <div
