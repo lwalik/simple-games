@@ -1,5 +1,9 @@
-export class DisplayPlayersOnBoardQuery {
-  constructor(public readonly players: Player[]) {}
+export class DisplayBoardQuery {
+  constructor(
+    public readonly currentPlayer: Player,
+    public readonly otherPlayers: Player[],
+    public readonly isVisible: boolean = false
+  ) {}
 }
 
 interface Player {

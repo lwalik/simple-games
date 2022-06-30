@@ -10,3 +10,4 @@ export * from './lib/adapters/secondary/storages/in-memory-game.storage-module';
 export * from './lib/adapters/secondary/storages/in-memory-game.storage-module';
 export * from './lib/adapters/primary/components/queue-players.component-module';
 export * from './lib/adapters/primary/components/reset-players-in-game.component-module';
+export * from './lib/adapters/primary/components/pick-modal.component-module';

@@ -1,7 +1,10 @@
 <div class="mt-4 w-full" *ngIf="player$ | async as player">
-  <div class="flex justify-center items-center gap-4" *ngIf="player.isActive">
+  <div
+    class="flex justify-center items-center gap-4"
+    *ngIf="player.current.isActive && !(inGame$ | async)?.inGame"
+  >
     <div class="text-center text-sm">
-      <p>Hello {{ player.username }}</p>
+      <p>Hello {{ player.current.username }}</p>
       <p>Join to the Game</p>
     </div>
 
@@ -9,7 +12,7 @@
       class="w-36"
       mat-raised-button
       color="accent"
-      (click)="onJoinButtonClicked()"
+      (click)="onJoinButtonClicked(player.current)"
     >
       Join
     </button>

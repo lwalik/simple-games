@@ -1,5 +1,8 @@
 import { PlayerDTO } from '../dto/player.dto';
 
 export interface GameContext {
-  readonly player: PlayerDTO;
+  readonly currentPlayer: PlayerDTO;
+  readonly othersPlayers: PlayerDTO[];
+  readonly queueStatus: boolean;
+  readonly inGame: boolean;
 }

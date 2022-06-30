@@ -4,22 +4,24 @@ import {
   Inject,
   ViewEncapsulation,
 } from '@angular/core';
-import { Observable, of } from 'rxjs';
-import { switchMap } from 'rxjs/operators';
-import { PlayerDTO } from '../../../application/ports/secondary/dto/player.dto';
+import { Observable } from 'rxjs';
 import { GameContext } from '../../../application/ports/secondary/context/game.context';
-import {
-  GETS_ONE_RPS_BOARD_DTO,
-  GetsOneRpsBoardDtoPort,
-} from '../../../application/ports/secondary/dto/gets-one-rps-board.dto-port';
+import { DisplayBoardQuery } from '../../../application/ports/primary/query/display-board.query';
 import {
   SELECTS_GAME_CONTEXT,
   SelectsGameContextPort,
 } from '../../../application/ports/secondary/context/selects-game.context-port';
 import {
-  SELECTS_USER_CONTEXT,
-  SelectsUserContextPort,
-} from 'libs/core/src/lib/application/ports/secondary/context/selects-user.context-port';
+  SWITCH_READY_STATUS_COMMAND,
+  SwitchReadyStatusCommandPort,
+} from '../../../application/ports/primary/command/switch-ready-status.command-port';
+import {
+  GETS_CURRENT_DISPLAY_BOARD_QUERY,
+  GetsCurrentDisplayBoardQueryPort,
+} from '../../../application/ports/primary/query/gets-current-display-board.query-port';
+import { PickModalComponent } from './pick-modal.component';
+import { SwitchReadyStatusCommand } from '../../../application/ports/primary/command/switch-ready-status.command';
+import { MatDialog } from '@angular/material/dialog';
 
 @Component({
   selector: 'lib-board',
@@ -28,17 +30,29 @@ import {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class BoardComponent {
-  players$: Observable<PlayerDTO[]> = this._getsOneRpsBoardDto
-    .getOne()
-    .pipe(switchMap((board) => of(board.players)));
   context$: Observable<GameContext> = this._selectsGameContext.select();
+  players$: Observable<DisplayBoardQuery> =
+    this._getsCurrentDisplayBoardQuery.getCurrentDisplayBoardQuery();
 
   constructor(
-    @Inject(GETS_ONE_RPS_BOARD_DTO)
-    private _getsOneRpsBoardDto: GetsOneRpsBoardDtoPort,
-    @Inject(SELECTS_USER_CONTEXT)
-    private _selectsUserContext: SelectsUserContextPort,
     @Inject(SELECTS_GAME_CONTEXT)
-    private _selectsGameContext: SelectsGameContextPort
+    private _selectsGameContext: SelectsGameContextPort,
+    public dialog: MatDialog,
+    @Inject(SWITCH_READY_STATUS_COMMAND)
+    private _switchReadyStatusCommand: SwitchReadyStatusCommandPort,
+    @Inject(GETS_CURRENT_DISPLAY_BOARD_QUERY)
+    private _getsCurrentDisplayBoardQuery: GetsCurrentDisplayBoardQueryPort
   ) {}
+
+  onPickButtonClicked(): void {
+    this.dialog.open(PickModalComponent, {
+      width: '500px',
+    });
+  }
+
+  onReadyButtonClicked(): void {
+    this._switchReadyStatusCommand
+      .switchReadyStatus(new SwitchReadyStatusCommand())
+      .subscribe();
+  }
 }
