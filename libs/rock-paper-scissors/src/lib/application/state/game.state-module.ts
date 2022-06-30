@@ -15,6 +15,7 @@ import { RESET_QUEUE_STATUS_COMMAND } from '../ports/primary/command/reset-queue
 import { SET_OTHERS_PLAYER_IN_GAME_COMMAND } from '../ports/primary/command/set-others-player-in-game.command-port';
 import { GETS_CURRENT_DISPLAY_BOARD_QUERY } from '../ports/primary/query/gets-current-display-board.query-port';
 import { GETS_CURRENT_IN_GAME_QUERY } from '../ports/primary/query/gets-current-in-game.query-port';
+import { GETS_CURRENT_IS_SELECT_PLAYER_COUNT_VISIBLE_QUERY } from '../ports/primary/query/gets-current-is-select-player-count-visible.query-port';
 
 @NgModule({
   imports: [],
@@ -39,6 +40,10 @@ import { GETS_CURRENT_IN_GAME_QUERY } from '../ports/primary/query/gets-current-
     { provide: SET_OTHERS_PLAYER_IN_GAME_COMMAND, useExisting: GameState },
     { provide: GETS_CURRENT_DISPLAY_BOARD_QUERY, useExisting: GameState },
     { provide: GETS_CURRENT_IN_GAME_QUERY, useExisting: GameState },
+    {
+      provide: GETS_CURRENT_IS_SELECT_PLAYER_COUNT_VISIBLE_QUERY,
+      useExisting: GameState,
+    },
   ],
   exports: [],
 })

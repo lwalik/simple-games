@@ -16,6 +16,7 @@ import { ResetQueueStatusCommandPort } from '../ports/primary/command/reset-queu
 import { SetOthersPlayerInGameCommandPort } from '../ports/primary/command/set-others-player-in-game.command-port';
 import { GetsCurrentDisplayBoardQueryPort } from '../ports/primary/query/gets-current-display-board.query-port';
 import { GetsCurrentInGameQueryPort } from '../ports/primary/query/gets-current-in-game.query-port';
+import { GetsCurrentIsSelectPlayerCountVisibleQueryPort } from '../ports/primary/query/gets-current-is-select-player-count-visible.query-port';
 import {
   SETS_RPS_BOARD_DTO,
   SetsRpsBoardDtoPort,
@@ -60,6 +61,8 @@ import { ResetQueueStatusCommand } from '../ports/primary/command/reset-queue-st
 import { SetOthersPlayerInGameCommand } from '../ports/primary/command/set-others-player-in-game.command';
 import { DisplayBoardQuery } from '../ports/primary/query/display-board.query';
 import { InGameQuery } from '../ports/primary/query/in-game.query';
+import { IsSelectPlayerCountVisibleQuery } from '../ports/primary/query/is-select-player-count-visible.query';
+import { RpsBoardDTO } from '../ports/secondary/dto/rps-board.dto';
 import { SetActivePlayersCommand } from '../ports/primary/command/set-active-player.command';
 
 @Injectable()
@@ -79,7 +82,8 @@ export class GameState
     ResetQueueStatusCommandPort,
     SetOthersPlayerInGameCommandPort,
     GetsCurrentDisplayBoardQueryPort,
-    GetsCurrentInGameQueryPort
+    GetsCurrentInGameQueryPort,
+    GetsCurrentIsSelectPlayerCountVisibleQueryPort
 {
   constructor(
     @Inject(SETS_RPS_BOARD_DTO) private _setsRpsBoardDto: SetsRpsBoardDtoPort,
@@ -99,7 +103,7 @@ export class GameState
   selectPlayersCount(command: SelectPlayersCountCommand): Observable<void> {
     return this._setsRpsBoardDto
       .set({
-        maxPlayers: command.maxPlayers,
+        maxPlayers: +command.maxPlayers,
       })
       .pipe(
         take(1),
@@ -148,7 +152,11 @@ export class GameState
             switchMap(() =>
               this._setsRpsBoardDto.set({
                 ...board,
-                players: [...board.players, context.currentPlayer],
+                players: board.players.find(
+                  (player) => player.playerId === context.currentPlayer.playerId
+                )
+                  ? board.players
+                  : [...board.players, context.currentPlayer],
               })
             )
           )
@@ -317,7 +325,7 @@ export class GameState
             board.players.filter(
               (p) => p.playerId !== context.currentPlayer.playerId
             ),
-            context.inGame
+            board.maxPlayers === board.players.length && context.inGame
           )
       )
     );
@@ -330,6 +338,17 @@ export class GameState
         map(
           (gameContext: GameContext): InGameQuery =>
             new InGameQuery(gameContext.inGame)
+        )
+      );
+  }
+
+  getCurrentIsSelectPlayerCountVisibleQuery(): Observable<IsSelectPlayerCountVisibleQuery> {
+    return this._getsOneRpsBoardDto
+      .getOne()
+      .pipe(
+        map(
+          (rpsBoardDTO: RpsBoardDTO): IsSelectPlayerCountVisibleQuery =>
+            new IsSelectPlayerCountVisibleQuery(!rpsBoardDTO.players.length)
         )
       );
   }

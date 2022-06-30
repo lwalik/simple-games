@@ -5,16 +5,17 @@ import {
   ViewEncapsulation,
 } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
+import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 import {
   SELECT_PLAYERS_COUNT_COMMAND,
   SelectPlayersCountCommandPort,
 } from '../../../application/ports/primary/command/select-players-count.command-port';
-import { SelectPlayersCountCommand } from '../../../application/ports/primary/command/select-players-count.command';
 import {
-  SelectsUserContextPort,
-  SELECTS_USER_CONTEXT,
-} from 'libs/core/src/lib/application/ports/secondary/context/selects-user.context-port';
-import { map, Observable } from 'rxjs';
+  GETS_CURRENT_IS_SELECT_PLAYER_COUNT_VISIBLE_QUERY,
+  GetsCurrentIsSelectPlayerCountVisibleQueryPort,
+} from '../../../application/ports/primary/query/gets-current-is-select-player-count-visible.query-port';
+import { SelectPlayersCountCommand } from '../../../application/ports/primary/command/select-players-count.command';
 
 @Component({
   selector: 'lib-select-player-count',
@@ -24,16 +25,16 @@ import { map, Observable } from 'rxjs';
 })
 export class SelectPlayerCountComponent {
   readonly form: FormGroup = new FormGroup({ maxPlayers: new FormControl() });
-
-  isUser$: Observable<boolean> = this._selectsUserContext
-    .select()
-    .pipe(map((user) => (user.email.length !== 0 ? true : false)));
+  isVisible$: Observable<boolean> =
+    this._getsCurrentIsSelectPlayerCountVisibleQuery
+      .getCurrentIsSelectPlayerCountVisibleQuery()
+      .pipe(map((data) => data.isVisible));
 
   constructor(
     @Inject(SELECT_PLAYERS_COUNT_COMMAND)
     private _selectPlayersCountCommand: SelectPlayersCountCommandPort,
-    @Inject(SELECTS_USER_CONTEXT)
-    private _selectsUserContext: SelectsUserContextPort
+    @Inject(GETS_CURRENT_IS_SELECT_PLAYER_COUNT_VISIBLE_QUERY)
+    private _getsCurrentIsSelectPlayerCountVisibleQuery: GetsCurrentIsSelectPlayerCountVisibleQueryPort
   ) {}
 
   onMaxPlayersSelected(form: FormGroup): void {
