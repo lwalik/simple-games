@@ -13,7 +13,6 @@ import { GetsCurrentPlayerInContextQueryPort } from '../ports/primary/query/gets
 import { SetChoiceCommandPort } from '../ports/primary/command/set-choice.command-port';
 import { SwitchReadyStatusCommandPort } from '../ports/primary/command/switch-ready-status.command-port';
 import { ResetQueueStatusCommandPort } from '../ports/primary/command/reset-queue-status.command-port';
-import { GetsCurrentDisplayBoardQueryPort } from '../ports/primary/query/gets-current-display-board.query-port';
 import { GetsCurrentInGameQueryPort } from '../ports/primary/query/gets-current-in-game.query-port';
 import { GetsCurrentIsSelectPlayerCountVisibleQueryPort } from '../ports/primary/query/gets-current-is-select-player-count-visible.query-port';
 import { GetsAllDisplayPlayerResultQueryPort } from '../ports/primary/query/gets-all-display-player-result.query-port';
@@ -61,7 +60,6 @@ import { GameContext } from '../ports/secondary/context/game.context';
 import { SetChoiceCommand } from '../ports/primary/command/set-choice.command';
 import { SwitchReadyStatusCommand } from '../ports/primary/command/switch-ready-status.command';
 import { ResetQueueStatusCommand } from '../ports/primary/command/reset-queue-status.command';
-import { DisplayBoardQuery } from '../ports/primary/query/display-board.query';
 import { InGameQuery } from '../ports/primary/query/in-game.query';
 import { IsSelectPlayerCountVisibleQuery } from '../ports/primary/query/is-select-player-count-visible.query';
 import { RpsBoardDTO } from '../ports/secondary/dto/rps-board.dto';
@@ -89,7 +87,6 @@ export class GameState
     SetChoiceCommandPort,
     SwitchReadyStatusCommandPort,
     ResetQueueStatusCommandPort,
-    GetsCurrentDisplayBoardQueryPort,
     GetsCurrentInGameQueryPort,
     GetsCurrentIsSelectPlayerCountVisibleQueryPort,
     GetsAllDisplayPlayerResultQueryPort,
@@ -323,24 +320,6 @@ export class GameState
     return this._patchesGameContext.patch({
       queueStatus: true,
     });
-  }
-
-  getCurrentDisplayBoardQuery(): Observable<DisplayBoardQuery> {
-    return combineLatest([
-      this._selectsGameContext.select(),
-      this._getsOneRpsBoardDto.getOne(),
-    ]).pipe(
-      map(
-        ([context, board]): DisplayBoardQuery =>
-          new DisplayBoardQuery(
-            context.currentPlayer,
-            board.players.filter(
-              (p) => p.playerId !== context.currentPlayer.playerId
-            ),
-            board.maxPlayers === board.players.length && context.inGame
-          )
-      )
-    );
   }
 
   getCurrentInGameQuery(): Observable<InGameQuery> {
