@@ -1,31 +1,32 @@
-<div class="w-full grid grid-cols-1 mb-2 mx-auto">
-  <p class="text-2xl text-center text-black">Waiting for all players...</p>
-</div>
-<div *ngIf="players$ | async as players">
-  <ul class="grid grid-cols-3 lg:grid-cols-6 gap-4">
-    <li *ngFor="let player of players">
-      <div
-        *ngIf="
-          player.isActive &&
-            (userContext$ | async)?.email?.length !== 0 &&
-            ((gameContext$ | async)?.queueStatus || !(gameContext$ | async));
-          else disabledButton
-        "
-      >
-        <button
-          class="h-16 w-16"
-          mat-flat-button
-          color="warn"
-          (click)="onPlusButtonClicked(player)"
+<div *ngIf="(isVisible$ | async)?.isVisible">
+  <div class="w-full grid grid-cols-1 mb-2 mx-auto">
+    <p class="text-2xl text-center text-black">Waiting for all players...</p>
+  </div>
+  <div *ngIf="players$ | async as players">
+    <ul class="grid grid-cols-3 lg:grid-cols-6 gap-4">
+      <li *ngFor="let player of players">
+        <div
+          *ngIf="
+            player.isActive &&
+              ((gameContext$ | async)?.queueStatus || !(gameContext$ | async));
+            else disabledButton
+          "
         >
-          +
-        </button>
-      </div>
-      <ng-template #disabledButton>
-        <button class="h-16 w-16" mat-flat-button color="warn" disabled>
-          +
-        </button>
-      </ng-template>
-    </li>
-  </ul>
+          <button
+            class="h-16 w-16"
+            mat-flat-button
+            color="warn"
+            (click)="onPlusButtonClicked(player)"
+          >
+            +
+          </button>
+        </div>
+        <ng-template #disabledButton>
+          <button class="h-16 w-16" mat-flat-button color="warn" disabled>
+            +
+          </button>
+        </ng-template>
+      </li>
+    </ul>
+  </div>
 </div>
