@@ -5,23 +5,33 @@ import {
   ViewEncapsulation,
 } from '@angular/core';
 import { Observable } from 'rxjs';
-import { GameContext } from '../../../application/ports/secondary/context/game.context';
-import { DisplayBoardQuery } from '../../../application/ports/primary/query/display-board.query';
-import {
-  SELECTS_GAME_CONTEXT,
-  SelectsGameContextPort,
-} from '../../../application/ports/secondary/context/selects-game.context-port';
+import { DisplayPlayerResultQuery } from '../../../application/ports/primary/query/display-player-result.query';
 import {
   SWITCH_READY_STATUS_COMMAND,
   SwitchReadyStatusCommandPort,
 } from '../../../application/ports/primary/command/switch-ready-status.command-port';
 import {
-  GETS_CURRENT_DISPLAY_BOARD_QUERY,
-  GetsCurrentDisplayBoardQueryPort,
-} from '../../../application/ports/primary/query/gets-current-display-board.query-port';
+  SET_CURRENT_WINNER_COMMAND,
+  SetCurrentWinnerCommandPort,
+} from '../../../application/ports/primary/command/set-current-winner.command-port';
+import {
+  GETS_ALL_DISPLAY_PLAYER_RESULT_QUERY,
+  GetsAllDisplayPlayerResultQueryPort,
+} from '../../../application/ports/primary/query/gets-all-display-player-result.query-port';
+import {
+  START_NEXT_ROUND_COMMAND,
+  StartNextRoundCommandPort,
+} from '../../../application/ports/primary/command/start-next-round.command-port';
 import { PickModalComponent } from './pick-modal.component';
 import { SwitchReadyStatusCommand } from '../../../application/ports/primary/command/switch-ready-status.command';
+import { SetCurrentWinnerCommand } from '../../../application/ports/primary/command/set-current-winner.command';
+import { WantNextRoundCommand } from '../../../application/ports/primary/command/want-next-round.command';
 import { MatDialog } from '@angular/material/dialog';
+import {
+  WANT_NEXT_ROUND_COMMAND,
+  WantNextRoundCommandPort,
+} from '../../../application/ports/primary/command/want-next-round.command-port';
+import { StartNextRoundCommand } from '../../../application/ports/primary/command/start-next-round.command';
 
 @Component({
   selector: 'lib-board',
@@ -30,18 +40,21 @@ import { MatDialog } from '@angular/material/dialog';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class BoardComponent {
-  context$: Observable<GameContext> = this._selectsGameContext.select();
-  players$: Observable<DisplayBoardQuery> =
-    this._getsCurrentDisplayBoardQuery.getCurrentDisplayBoardQuery();
+  players$: Observable<DisplayPlayerResultQuery[]> =
+    this._getsAllDisplayPlayerResultQuery.getAllDisplayPlayerResultQuery();
 
   constructor(
-    @Inject(SELECTS_GAME_CONTEXT)
-    private _selectsGameContext: SelectsGameContextPort,
     public dialog: MatDialog,
     @Inject(SWITCH_READY_STATUS_COMMAND)
     private _switchReadyStatusCommand: SwitchReadyStatusCommandPort,
-    @Inject(GETS_CURRENT_DISPLAY_BOARD_QUERY)
-    private _getsCurrentDisplayBoardQuery: GetsCurrentDisplayBoardQueryPort
+    @Inject(SET_CURRENT_WINNER_COMMAND)
+    private _setCurrentWinnerCommand: SetCurrentWinnerCommandPort,
+    @Inject(GETS_ALL_DISPLAY_PLAYER_RESULT_QUERY)
+    private _getsAllDisplayPlayerResultQuery: GetsAllDisplayPlayerResultQueryPort,
+    @Inject(WANT_NEXT_ROUND_COMMAND)
+    private _wantNextRoundCommand: WantNextRoundCommandPort,
+    @Inject(START_NEXT_ROUND_COMMAND)
+    private _startNextRoundCommand: StartNextRoundCommandPort
   ) {}
 
   onPickButtonClicked(): void {
@@ -53,6 +66,26 @@ export class BoardComponent {
   onReadyButtonClicked(): void {
     this._switchReadyStatusCommand
       .switchReadyStatus(new SwitchReadyStatusCommand())
+      .subscribe(() =>
+        this._setCurrentWinnerCommand
+          .setCurrentWinner(new SetCurrentWinnerCommand())
+          .subscribe()
+      );
+  }
+
+  onNextButtonClicked(): void {
+    this._wantNextRoundCommand
+      .wantNextRound(new WantNextRoundCommand(true))
+      .subscribe(() =>
+        this._startNextRoundCommand
+          .startNextRound(new StartNextRoundCommand())
+          .subscribe()
+      );
+  }
+
+  onCancelButtonClicked(): void {
+    this._wantNextRoundCommand
+      .wantNextRound(new WantNextRoundCommand(false))
       .subscribe();
   }
 }
