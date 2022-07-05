@@ -4,4 +4,5 @@ export interface RpsBoardDTO {
   readonly id: string;
   readonly players: PlayerDTO[];
   readonly maxPlayers: number;
+  readonly currentWinner: PlayerDTO[];
 }
