@@ -5,4 +5,5 @@ export interface PlayerDTO {
   readonly isActive: boolean;
   readonly isReady: boolean;
   readonly choice: string;
+  readonly wantNext: boolean;
 }

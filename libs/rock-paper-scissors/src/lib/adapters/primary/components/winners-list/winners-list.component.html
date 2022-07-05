@@ -1,0 +1,6 @@
+<mat-chip-list class="example-chip" *ngIf="(winners$ | async)?.length">
+  The last Winners:
+  <mat-chip class="example-box" cdkDrag *ngFor="let winner of winners$ | async">
+    {{ winner.player }}
+  </mat-chip>
+</mat-chip-list>

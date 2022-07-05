@@ -11,6 +11,7 @@ import {
   QueuePlayersComponentModule,
   ResetPlayersInGameComponentModule,
   SelectPlayerCountComponentModule,
+  WinnersListComponentModule,
 } from '@rock-paper-scissors';
 import { RockPaperScissorsBoardPage } from './rock-paper-scissors-board.page';
 
@@ -33,6 +34,7 @@ import { RockPaperScissorsBoardPage } from './rock-paper-scissors-board.page';
     QueuePlayersComponentModule,
     GameStateModule,
     ResetPlayersInGameComponentModule,
+    WinnersListComponentModule,
   ],
   declarations: [RockPaperScissorsBoardPage],
   providers: [],

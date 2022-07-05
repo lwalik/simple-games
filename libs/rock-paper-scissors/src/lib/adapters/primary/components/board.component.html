@@ -1,86 +1,125 @@
 <div
-  class="h-full w-4/5 grid md:grid-cols-3 gap-8 mt-24 mx-auto grid-cols-1"
-  *ngIf="(players$ | async)?.isVisible"
+  class="mt-8 h-4/5 w-full mx-auto bg-violet-400 shadow-inner rounded-lg flex items-center justify-center fade-in"
+  *ngIf="players$ | async as players"
 >
-  <div
-    class="col-span-1 row-span-1 grid grid-rows-3 me-4"
-    *ngIf="(players$ | async)?.currentPlayer as current"
-  >
-    <mat-card
-      class="example-card h-full p-0 row-start-2"
-      *ngIf="current.username"
+  <div class="grid grid-cols-3 w-5/6 h-full mb-24">
+    <div
+      class="grid grid-rows-3 grid-flow-col justify-center gap-4"
+      *ngFor="let player of players; let i = index"
     >
-      <mat-card-subtitle class="mb-0"
-        ><p class="px-4 text-center">
-          Current: {{ current.username }}
-        </p></mat-card-subtitle
-      >
-
       <div
-        class="flex justify-center"
-        *ngIf="!current.isReady; else notReadyCurrent"
+        class="row-start-2 flex flex-col items-center justify-center border-4 rounded-2xl px-4 shadow-lg"
+        *ngIf="i % 2 !== 0"
       >
-        <button
-          mat-raised-button
-          color="accent"
-          class="w-full"
-          (click)="onReadyButtonClicked()"
-          [disabled]="!current.choice"
-        >
-          Ready
-        </button>
-        <button
-          mat-raised-button
-          color="warn"
-          class="w-full"
-          (click)="onPickButtonClicked()"
-        >
-          Pick
-        </button>
+        <p class="text-center text-white">{{ player.username }}</p>
+        <p class="text-center text-white" *ngIf="player.choice.isVisible">
+          {{ player.choice.name }}
+        </p>
+        <div *ngIf="player.isCurrent">
+          <div
+            class="flex justify-center"
+            *ngIf="!player.isReady; else notReadyCurrent"
+          >
+            <button
+              mat-raised-button
+              color="accent"
+              class="w-full"
+              (click)="onReadyButtonClicked()"
+              [disabled]="!player.choice.name"
+            >
+              Ready
+            </button>
+            <button
+              mat-raised-button
+              color="warn"
+              class="w-full"
+              (click)="onPickButtonClicked()"
+            >
+              Pick
+            </button>
+          </div>
+
+          <ng-template #notReadyCurrent>
+            <div class="flex justify-center">
+              <button
+                mat-raised-button
+                color="accent"
+                class="w-full"
+                (click)="onNextButtonClicked()"
+                *ngIf="!player.wantNext"
+              >
+                Next
+              </button>
+              <button
+                mat-raised-button
+                color="accent"
+                class="w-full"
+                (click)="onCancelButtonClicked()"
+                *ngIf="player.wantNext"
+              >
+                Cancel
+              </button>
+            </div>
+          </ng-template>
+        </div>
       </div>
 
-      <ng-template #notReadyCurrent>
-        <div class="flex justify-center">
-          <button
-            mat-raised-button
-            color="accent"
-            class="w-full"
-            (click)="onReadyButtonClicked()"
+      <div
+        class="row-start-3 flex flex-col items-center justify-center border-4 rounded-2xl px-4 shadow-lg"
+        *ngIf="i % 2 === 0"
+      >
+        <p class="text-center text-white">{{ player.username }}</p>
+        <p class="text-center text-white" *ngIf="player.choice.isVisible">
+          {{ player.choice.name }}
+        </p>
+        <div *ngIf="player.isCurrent">
+          <div
+            class="flex justify-center"
+            *ngIf="!player.isReady; else notReadyCurrent"
           >
-            Cancel
-          </button>
-        </div>
-      </ng-template>
-    </mat-card>
-  </div>
-
-  <div
-    class="col-span-2 grid grid-cols-2 gap-4 place-content-around"
-    *ngIf="(players$ | async)?.otherPlayers as others"
-  >
-    <div
-      class="flex flex-row items-center justify-center"
-      *ngFor="let other of others"
-    >
-      <mat-card class="example-card p-0">
-        <mat-card-subtitle class="mb-0">
-          <p class="px-4 text-center">Other: {{ other.username }}</p>
-        </mat-card-subtitle>
-
-        <div
-          class="flex justify-center"
-          *ngIf="!other.isReady; else notReadyOther"
-        >
-          <p>Waiting</p>
-        </div>
-        <ng-template #notReadyOther>
-          <div class="flex justify-center text-green-400">
-            <p>Ready</p>
+            <button
+              mat-raised-button
+              color="accent"
+              class="w-full"
+              (click)="onReadyButtonClicked()"
+              [disabled]="!player.choice.name"
+            >
+              Ready
+            </button>
+            <button
+              mat-raised-button
+              color="warn"
+              class="w-full"
+              (click)="onPickButtonClicked()"
+            >
+              Pick
+            </button>
           </div>
-        </ng-template>
-      </mat-card>
+
+          <ng-template #notReadyCurrent>
+            <div class="flex justify-center">
+              <button
+                mat-raised-button
+                color="accent"
+                class="w-full"
+                (click)="onNextButtonClicked()"
+                *ngIf="!player.wantNext"
+              >
+                Next
+              </button>
+              <button
+                mat-raised-button
+                color="accent"
+                class="w-full"
+                (click)="onCancelButtonClicked()"
+                *ngIf="player.wantNext"
+              >
+                Cancel
+              </button>
+            </div>
+          </ng-template>
+        </div>
+      </div>
     </div>
   </div>
 </div>
-
-<!-- <p>{{ context$ | async | json }}</p> -->

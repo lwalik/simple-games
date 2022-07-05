@@ -21,7 +21,6 @@ const routes: Routes = [
   {
     path: 'games',
     loadChildren: () => GamesFlowPageModule,
-    resolve: [LoginUserResolver],
   },
 ];
 @NgModule({
