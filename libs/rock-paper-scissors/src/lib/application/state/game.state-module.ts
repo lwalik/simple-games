@@ -14,7 +14,7 @@ import { SWITCH_READY_STATUS_COMMAND } from '../ports/primary/command/switch-rea
 import { RESET_QUEUE_STATUS_COMMAND } from '../ports/primary/command/reset-queue-status.command-port';
 import { GETS_CURRENT_IN_GAME_QUERY } from '../ports/primary/query/gets-current-in-game.query-port';
 import { GETS_CURRENT_IS_SELECT_PLAYER_COUNT_VISIBLE_QUERY } from '../ports/primary/query/gets-current-is-select-player-count-visible.query-port';
-import { GETS_ALL_DISPLAY_PLAYER_RESULT_QUERY } from '../ports/primary/query/gets-all-display-player-result.query-port';
+import { GETS_ALL_DISPLAY_PLAYER_ON_BOARD_QUERY } from '../ports/primary/query/gets-all-display-player-on-board.query-port';
 import { SET_CURRENT_WINNER_COMMAND } from '../ports/primary/command/set-current-winner.command-port';
 import { GETS_ALL_DISPLAY_WINNER_QUERY } from '../ports/primary/query/gets-all-display-winner.query-port';
 import { GETS_CURRENT_IS_QUEUE_VISIBLE_QUERY } from '../ports/primary/query/gets-current-is-queue-visible.query-port';
@@ -46,7 +46,7 @@ import { START_NEXT_ROUND_COMMAND } from '../ports/primary/command/start-next-ro
       provide: GETS_CURRENT_IS_SELECT_PLAYER_COUNT_VISIBLE_QUERY,
       useExisting: GameState,
     },
-    { provide: GETS_ALL_DISPLAY_PLAYER_RESULT_QUERY, useExisting: GameState },
+    { provide: GETS_ALL_DISPLAY_PLAYER_ON_BOARD_QUERY, useExisting: GameState },
     {
       provide: SET_CURRENT_WINNER_COMMAND,
       useExisting: GameState,

@@ -5,7 +5,7 @@ import {
   ViewEncapsulation,
 } from '@angular/core';
 import { Observable } from 'rxjs';
-import { DisplayPlayerResultQuery } from '../../../application/ports/primary/query/display-player-result.query';
+import { DisplayPlayerOnBoardQuery } from '../../../application/ports/primary/query/display-player-on-board.query';
 import {
   SWITCH_READY_STATUS_COMMAND,
   SwitchReadyStatusCommandPort,
@@ -15,9 +15,9 @@ import {
   SetCurrentWinnerCommandPort,
 } from '../../../application/ports/primary/command/set-current-winner.command-port';
 import {
-  GETS_ALL_DISPLAY_PLAYER_RESULT_QUERY,
-  GetsAllDisplayPlayerResultQueryPort,
-} from '../../../application/ports/primary/query/gets-all-display-player-result.query-port';
+  GETS_ALL_DISPLAY_PLAYER_ON_BOARD_QUERY,
+  GetsAllDisplayPlayerOnBoardQueryPort,
+} from '../../../application/ports/primary/query/gets-all-display-player-on-board.query-port';
 import {
   START_NEXT_ROUND_COMMAND,
   StartNextRoundCommandPort,
@@ -40,8 +40,8 @@ import { StartNextRoundCommand } from '../../../application/ports/primary/comman
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class BoardComponent {
-  players$: Observable<DisplayPlayerResultQuery[]> =
-    this._getsAllDisplayPlayerResultQuery.getAllDisplayPlayerResultQuery();
+  players$: Observable<DisplayPlayerOnBoardQuery[]> =
+    this._getsAllDisplayPlayerResultQuery.getAllDisplayPlayerOnBoardQuery();
 
   constructor(
     public dialog: MatDialog,
@@ -49,8 +49,8 @@ export class BoardComponent {
     private _switchReadyStatusCommand: SwitchReadyStatusCommandPort,
     @Inject(SET_CURRENT_WINNER_COMMAND)
     private _setCurrentWinnerCommand: SetCurrentWinnerCommandPort,
-    @Inject(GETS_ALL_DISPLAY_PLAYER_RESULT_QUERY)
-    private _getsAllDisplayPlayerResultQuery: GetsAllDisplayPlayerResultQueryPort,
+    @Inject(GETS_ALL_DISPLAY_PLAYER_ON_BOARD_QUERY)
+    private _getsAllDisplayPlayerResultQuery: GetsAllDisplayPlayerOnBoardQueryPort,
     @Inject(WANT_NEXT_ROUND_COMMAND)
     private _wantNextRoundCommand: WantNextRoundCommandPort,
     @Inject(START_NEXT_ROUND_COMMAND)

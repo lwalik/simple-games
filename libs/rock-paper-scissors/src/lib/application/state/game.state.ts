@@ -15,7 +15,7 @@ import { SwitchReadyStatusCommandPort } from '../ports/primary/command/switch-re
 import { ResetQueueStatusCommandPort } from '../ports/primary/command/reset-queue-status.command-port';
 import { GetsCurrentInGameQueryPort } from '../ports/primary/query/gets-current-in-game.query-port';
 import { GetsCurrentIsSelectPlayerCountVisibleQueryPort } from '../ports/primary/query/gets-current-is-select-player-count-visible.query-port';
-import { GetsAllDisplayPlayerResultQueryPort } from '../ports/primary/query/gets-all-display-player-result.query-port';
+import { GetsAllDisplayPlayerOnBoardQueryPort } from '../ports/primary/query/gets-all-display-player-on-board.query-port';
 import { GetsAllDisplayWinnerQueryPort } from '../ports/primary/query/gets-all-display-winner.query-port';
 import { GetsCurrentIsQueueVisibleQueryPort } from '../ports/primary/query/gets-current-is-queue-visible.query-port';
 import { StartNextRoundCommandPort } from '../ports/primary/command/start-next-round.command-port';
@@ -63,7 +63,7 @@ import { ResetQueueStatusCommand } from '../ports/primary/command/reset-queue-st
 import { InGameQuery } from '../ports/primary/query/in-game.query';
 import { IsSelectPlayerCountVisibleQuery } from '../ports/primary/query/is-select-player-count-visible.query';
 import { RpsBoardDTO } from '../ports/secondary/dto/rps-board.dto';
-import { DisplayPlayerResultQuery } from '../ports/primary/query/display-player-result.query';
+import { DisplayPlayerOnBoardQuery } from '../ports/primary/query/display-player-on-board.query';
 import { DisplayWinnerQuery } from '../ports/primary/query/display-winner.query';
 import { SetCurrentWinnerCommand } from '../ports/primary/command/set-current-winner.command';
 import { IsQueueVisibleQuery } from '../ports/primary/query/is-queue-visible.query';
@@ -89,7 +89,7 @@ export class GameState
     ResetQueueStatusCommandPort,
     GetsCurrentInGameQueryPort,
     GetsCurrentIsSelectPlayerCountVisibleQueryPort,
-    GetsAllDisplayPlayerResultQueryPort,
+    GetsAllDisplayPlayerOnBoardQueryPort,
     GetsAllDisplayWinnerQueryPort,
     GetsCurrentIsQueueVisibleQueryPort,
     WantNextRoundCommandPort,
@@ -344,7 +344,7 @@ export class GameState
       );
   }
 
-  getAllDisplayPlayerResultQuery(): Observable<DisplayPlayerResultQuery[]> {
+  getAllDisplayPlayerOnBoardQuery(): Observable<DisplayPlayerOnBoardQuery[]> {
     return combineLatest([
       this._getsOneRpsBoardDto.getOne(),
       this._selectsGameContext.select(),
@@ -352,14 +352,14 @@ export class GameState
       map(([board, context]) =>
         board.players.map((player) =>
           context.currentPlayer.playerId === player.playerId
-            ? new DisplayPlayerResultQuery(
+            ? new DisplayPlayerOnBoardQuery(
                 context.currentPlayer.username,
                 { name: player.choice, isVisible: true },
                 player.isReady,
                 true,
                 player.wantNext
               )
-            : new DisplayPlayerResultQuery(
+            : new DisplayPlayerOnBoardQuery(
                 player.username,
                 {
                   name: player.choice,

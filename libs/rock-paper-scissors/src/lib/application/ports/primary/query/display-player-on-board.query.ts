@@ -1,4 +1,4 @@
-export class DisplayPlayerResultQuery {
+export class DisplayPlayerOnBoardQuery {
   constructor(
     public readonly username: string,
     public readonly choice: {
