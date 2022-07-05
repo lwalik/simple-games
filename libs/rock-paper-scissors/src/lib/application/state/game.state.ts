@@ -8,7 +8,7 @@ import { JoinPlayerCommandPort } from '../ports/primary/command/join-player.comm
 import { SetUsernameCommandPort } from '../ports/primary/command/set-username.command-port';
 import { TakePlayerCommandPort } from '../ports/primary/command/take-player.command-port';
 import { InitBoardCommandPort } from '../ports/primary/command/init-board.command-port';
-import { SwitchPlayerInContextStatusCommandPort } from '../ports/primary/command/switch-player-in-context-status.command-port';
+import { SwitchActiveStatusCommandPort } from '../ports/primary/command/switch-active-status.command-port';
 import { GetsCurrentPlayerInContextQueryPort } from '../ports/primary/query/gets-current-player-in-context.query-port';
 import { SetChoiceCommandPort } from '../ports/primary/command/set-choice.command-port';
 import { SwitchReadyStatusCommandPort } from '../ports/primary/command/switch-ready-status.command-port';
@@ -55,7 +55,7 @@ import { SetUsernameCommand } from '../ports/primary/command/set-username.comman
 import { TakePlayerCommand } from '../ports/primary/command/take-player.command';
 import { InitBoardCommand } from '../ports/primary/command/init-board.command';
 import { PlayerDTO } from '../ports/secondary/dto/player.dto';
-import { SwitchPlayerInContextStatusCommand } from '../ports/primary/command/switch-player-in-context-status.command';
+import { SwitchActiveStatusCommand } from '../ports/primary/command/switch-active-status.command';
 import { PlayerInContextQuery } from '../ports/primary/query/player-in-context.query';
 import { GameContext } from '../ports/secondary/context/game.context';
 import { SetChoiceCommand } from '../ports/primary/command/set-choice.command';
@@ -84,7 +84,7 @@ export class GameState
     SetUsernameCommandPort,
     TakePlayerCommandPort,
     InitBoardCommandPort,
-    SwitchPlayerInContextStatusCommandPort,
+    SwitchActiveStatusCommandPort,
     GetsCurrentPlayerInContextQueryPort,
     SetChoiceCommandPort,
     SwitchReadyStatusCommandPort,
@@ -216,9 +216,7 @@ export class GameState
     );
   }
 
-  switchPlayerInContextStatus(
-    command: SwitchPlayerInContextStatusCommand
-  ): Observable<void> {
+  switchActiveStatus(command: SwitchActiveStatusCommand): Observable<void> {
     return this._selectsGameContext.select().pipe(
       take(1),
       switchMap((context) =>

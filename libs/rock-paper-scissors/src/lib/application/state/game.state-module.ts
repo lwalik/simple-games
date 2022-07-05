@@ -7,7 +7,7 @@ import { JOIN_PLAYER_COMMAND } from '../ports/primary/command/join-player.comman
 import { SET_USERNAME_COMMAND } from '../ports/primary/command/set-username.command-port';
 import { TAKE_PLAYER_COMMAND } from '../ports/primary/command/take-player.command-port';
 import { INIT_BOARD_COMMAND } from '../ports/primary/command/init-board.command-port';
-import { SWITCH_PLAYER_IN_CONTEXT_STATUS_COMMAND } from '../ports/primary/command/switch-player-in-context-status.command-port';
+import { SWITCH_ACTIVE_STATUS_COMMAND } from '../ports/primary/command/switch-active-status.command-port';
 import { GETS_CURRENT_PLAYER_IN_CONTEXT_QUERY } from '../ports/primary/query/gets-current-player-in-context.query-port';
 import { SET_CHOICE_COMMAND } from '../ports/primary/command/set-choice.command-port';
 import { SWITCH_READY_STATUS_COMMAND } from '../ports/primary/command/switch-ready-status.command-port';
@@ -35,7 +35,7 @@ import { START_NEXT_ROUND_COMMAND } from '../ports/primary/command/start-next-ro
     { provide: TAKE_PLAYER_COMMAND, useExisting: GameState },
     { provide: INIT_BOARD_COMMAND, useExisting: GameState },
     {
-      provide: SWITCH_PLAYER_IN_CONTEXT_STATUS_COMMAND,
+      provide: SWITCH_ACTIVE_STATUS_COMMAND,
       useExisting: GameState,
     },
     { provide: GETS_CURRENT_PLAYER_IN_CONTEXT_QUERY, useExisting: GameState },
