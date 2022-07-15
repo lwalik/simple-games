@@ -42,10 +42,14 @@ import { WantNextRoundCommand } from '../ports/primary/command/want-next-round.c
 import { WANT_NEXT_ROUND_COMMAND } from '../ports/primary/command/want-next-round.command-port';
 import { StartNextRoundCommand } from '../ports/primary/command/start-next-round.command';
 import { START_NEXT_ROUND_COMMAND } from '../ports/primary/command/start-next-round.command-port';
+import { SetCurrentWinnerCommand } from '../ports/primary/command/set-current-winner.command';
+import { SET_CURRENT_WINNER_COMMAND } from '../ports/primary/command/set-current-winner.command-port';
 import { PlayerInContextQuery } from '../ports/primary/query/player-in-context.query';
 import { InGameQuery } from '../ports/primary/query/in-game.query';
 import { IsSelectPlayerCountVisibleQuery } from '../ports/primary/query/is-select-player-count-visible.query';
 import { DisplayPlayerOnBoardQuery } from '../ports/primary/query/display-player-on-board.query';
+import { DisplayWinnerQuery } from '../ports/primary/query/display-winner.query';
+import { IsQueueVisibleQuery } from '../ports/primary/query/is-queue-visible.query';
 import { SetActivePlayersCommand } from '../ports/primary/command/set-active-player.command';
 
 const PLAYER_DTO_STUB: PlayerDTO = {
@@ -67,6 +71,24 @@ const RPS_BOARD_STUB: RpsBoardDTO = {
   ],
   maxPlayers: 3,
   currentWinner: [PLAYER_DTO_STUB],
+};
+
+const GAME_CONTEXT_STUB: GameContext = {
+  currentPlayer: {
+    ...PLAYER_DTO_STUB,
+    playerId: 1,
+    wantNext: false,
+  },
+  othersPlayers: [
+    {
+      ...PLAYER_DTO_STUB,
+      id: '231abc',
+      playerId: 2,
+      wantNext: false,
+    },
+  ],
+  queueStatus: true,
+  inGame: false,
 };
 
 describe('GameState', () => {
@@ -207,6 +229,10 @@ describe('GameState', () => {
       startNextRound: (command: StartNextRoundCommand) =>
         TestBed.inject(START_NEXT_ROUND_COMMAND)
           .startNextRound(command)
+          .toPromise(),
+      setCurrentWinner: (command: SetCurrentWinnerCommand) =>
+        TestBed.inject(SET_CURRENT_WINNER_COMMAND)
+          .setCurrentWinner(command)
           .toPromise(),
     };
   };
@@ -1071,6 +1097,741 @@ describe('GameState', () => {
       const actual = await getAllDisplayPlayerOnBoardQuery();
 
       expect(actual).toEqual(thenData.getAllDisplayPlayerOnBoardQuery);
+    })
+  );
+  [
+    {
+      givenData: {
+        getsOneRpsBoardDtoPortStub: {
+          id: 'sa1235asd1',
+          players: [
+            {
+              ...PLAYER_DTO_STUB,
+              id: '123abc',
+              playerId: 1,
+              username: 'testUser1',
+              choice: 'paper',
+            },
+            {
+              ...PLAYER_DTO_STUB,
+              id: '231abc',
+              playerId: 2,
+              username: 'testUser2',
+              choice: 'rock',
+            },
+            {
+              ...PLAYER_DTO_STUB,
+              id: '312abc',
+              playerId: 3,
+              username: 'testUser3',
+              choice: 'rock',
+            },
+          ],
+          maxPlayers: 3,
+          currentWinner: [
+            {
+              ...PLAYER_DTO_STUB,
+              id: '123abc',
+              playerId: 1,
+              username: 'testUser1',
+              choice: 'paper',
+            },
+          ],
+        },
+      },
+      whenData: {},
+      thenData: {
+        getAllDisplayWinnerQuery: [new DisplayWinnerQuery('testUser1')],
+      },
+    },
+    {
+      givenData: {
+        getsOneRpsBoardDtoPortStub: {
+          id: 'sa1235asd1',
+          players: [
+            {
+              ...PLAYER_DTO_STUB,
+              id: '123abc',
+              playerId: 1,
+              username: 'testUser1',
+              choice: 'paper',
+            },
+            {
+              ...PLAYER_DTO_STUB,
+              id: '231abc',
+              playerId: 2,
+              username: 'testUser2',
+              choice: 'paper',
+            },
+            {
+              ...PLAYER_DTO_STUB,
+              id: '312abc',
+              playerId: 3,
+              username: 'testUser3',
+              choice: 'scissors',
+            },
+          ],
+          maxPlayers: 3,
+          currentWinner: [
+            {
+              ...PLAYER_DTO_STUB,
+              id: '312abc',
+              playerId: 3,
+              username: 'testUser3',
+              choice: 'scissors',
+            },
+          ],
+        },
+      },
+      whenData: {},
+      thenData: {
+        getAllDisplayWinnerQuery: [new DisplayWinnerQuery('testUser3')],
+      },
+    },
+    {
+      givenData: {
+        getsOneRpsBoardDtoPortStub: {
+          id: 'sa1235asd1',
+          players: [
+            {
+              ...PLAYER_DTO_STUB,
+              id: '123abc',
+              playerId: 1,
+              username: 'testUser1',
+              choice: 'scissors',
+            },
+            {
+              ...PLAYER_DTO_STUB,
+              id: '231abc',
+              playerId: 2,
+              username: 'testUser2',
+              choice: 'paper',
+            },
+            {
+              ...PLAYER_DTO_STUB,
+              id: '312abc',
+              playerId: 3,
+              username: 'testUser3',
+              choice: 'scissors',
+            },
+          ],
+          maxPlayers: 3,
+          currentWinner: [
+            {
+              ...PLAYER_DTO_STUB,
+              id: '123abc',
+              playerId: 1,
+              username: 'testUser1',
+              choice: 'scissors',
+            },
+            {
+              ...PLAYER_DTO_STUB,
+              id: '312abc',
+              playerId: 3,
+              username: 'testUser3',
+              choice: 'scissors',
+            },
+          ],
+        },
+      },
+      whenData: {},
+      thenData: {
+        getAllDisplayWinnerQuery: [
+          new DisplayWinnerQuery('testUser1'),
+          new DisplayWinnerQuery('testUser3'),
+        ],
+      },
+    },
+    {
+      givenData: {
+        getsOneRpsBoardDtoPortStub: {
+          id: 'sa1235asd1',
+          players: [
+            {
+              ...PLAYER_DTO_STUB,
+              id: '123abc',
+              playerId: 1,
+              username: 'testUser1',
+              choice: 'scissors',
+            },
+            {
+              ...PLAYER_DTO_STUB,
+              id: '231abc',
+              playerId: 2,
+              username: 'testUser2',
+              choice: 'paper',
+            },
+            {
+              ...PLAYER_DTO_STUB,
+              id: '312abc',
+              playerId: 3,
+              username: 'testUser3',
+              choice: 'rock',
+            },
+          ],
+          maxPlayers: 3,
+          currentWinner: [],
+        },
+      },
+      whenData: {},
+      thenData: {
+        getAllDisplayWinnerQuery: [],
+      },
+    },
+  ].forEach(({ givenData, whenData, thenData }, i) =>
+    it(`should handle getAllDisplayWinnerQuery #${i + 1}`, async () => {
+      const { getAllDisplayWinnerQuery } = given(givenData);
+
+      const actual = await getAllDisplayWinnerQuery();
+
+      expect(actual).toEqual(thenData.getAllDisplayWinnerQuery);
+    })
+  );
+  [
+    {
+      givenData: {
+        getsOneRpsBoardDtoPortStub: {
+          id: 'sa1235asd1',
+          players: [
+            {
+              ...PLAYER_DTO_STUB,
+              id: '123abc',
+              playerId: 1,
+              username: 'testUser1',
+              choice: 'scissors',
+              isReady: true,
+            },
+            {
+              ...PLAYER_DTO_STUB,
+              id: '231abc',
+              playerId: 2,
+              username: 'testUser2',
+              choice: 'paper',
+              isReady: true,
+            },
+            {
+              ...PLAYER_DTO_STUB,
+              id: '312abc',
+              playerId: 3,
+              username: 'testUser3',
+              choice: 'paper',
+              isReady: true,
+            },
+          ],
+          maxPlayers: 3,
+          currentWinner: [],
+        },
+      },
+      whenData: new SetCurrentWinnerCommand(),
+      thenData: {
+        setsRpsBoardDtoPortSetSpyParams: {
+          id: 'sa1235asd1',
+          players: [
+            {
+              ...PLAYER_DTO_STUB,
+              id: '123abc',
+              playerId: 1,
+              username: 'testUser1',
+              choice: 'scissors',
+              isReady: true,
+            },
+            {
+              ...PLAYER_DTO_STUB,
+              id: '231abc',
+              playerId: 2,
+              username: 'testUser2',
+              choice: 'paper',
+              isReady: true,
+            },
+            {
+              ...PLAYER_DTO_STUB,
+              id: '312abc',
+              playerId: 3,
+              username: 'testUser3',
+              choice: 'paper',
+              isReady: true,
+            },
+          ],
+          maxPlayers: 3,
+          currentWinner: [
+            {
+              ...PLAYER_DTO_STUB,
+              id: '123abc',
+              playerId: 1,
+              username: 'testUser1',
+              choice: 'scissors',
+              isReady: true,
+            },
+          ],
+        },
+      },
+    },
+    {
+      givenData: {
+        getsOneRpsBoardDtoPortStub: {
+          id: 'sa1235asd1',
+          players: [
+            {
+              ...PLAYER_DTO_STUB,
+              id: '123abc',
+              playerId: 1,
+              username: 'testUser1',
+              choice: 'scissors',
+              isReady: true,
+            },
+            {
+              ...PLAYER_DTO_STUB,
+              id: '231abc',
+              playerId: 2,
+              username: 'testUser2',
+              choice: 'paper',
+              isReady: true,
+            },
+            {
+              ...PLAYER_DTO_STUB,
+              id: '312abc',
+              playerId: 3,
+              username: 'testUser3',
+              choice: 'rock',
+              isReady: true,
+            },
+          ],
+          maxPlayers: 3,
+          currentWinner: [],
+        },
+      },
+      whenData: new SetCurrentWinnerCommand(),
+      thenData: {
+        setsRpsBoardDtoPortSetSpyParams: {
+          id: 'sa1235asd1',
+          players: [
+            {
+              ...PLAYER_DTO_STUB,
+              id: '123abc',
+              playerId: 1,
+              username: 'testUser1',
+              choice: 'scissors',
+              isReady: true,
+            },
+            {
+              ...PLAYER_DTO_STUB,
+              id: '231abc',
+              playerId: 2,
+              username: 'testUser2',
+              choice: 'paper',
+              isReady: true,
+            },
+            {
+              ...PLAYER_DTO_STUB,
+              id: '312abc',
+              playerId: 3,
+              username: 'testUser3',
+              choice: 'rock',
+              isReady: true,
+            },
+          ],
+          maxPlayers: 3,
+          currentWinner: [],
+        },
+      },
+    },
+  ].forEach(({ givenData, whenData, thenData }, i) =>
+    it(`should handle setCurrentWinner #${i + 1}`, async () => {
+      const { setsRpsBoardDtoPortSetSpy, setCurrentWinner } = given(givenData);
+      await setCurrentWinner(whenData);
+      expect(setsRpsBoardDtoPortSetSpy).toHaveBeenCalledWith(
+        thenData.setsRpsBoardDtoPortSetSpyParams
+      );
+    })
+  );
+  [
+    {
+      givenData: {
+        getsOneRpsBoardDtoPortStub: {
+          id: 'sa1235asd1',
+          players: [
+            PLAYER_DTO_STUB,
+            {
+              ...PLAYER_DTO_STUB,
+              id: '231abc',
+              playerId: 2,
+              username: 'testUser2',
+            },
+            {
+              ...PLAYER_DTO_STUB,
+              id: '312abc',
+              playerId: 3,
+              username: 'testUser3',
+            },
+          ],
+          maxPlayers: 3,
+          currentWinner: [PLAYER_DTO_STUB],
+        },
+      },
+      whenData: {},
+      thenData: {
+        getCurrentIsQueueVisibleQuery: new IsQueueVisibleQuery(false),
+      },
+    },
+    {
+      givenData: {
+        getsOneRpsBoardDtoPortStub: {
+          id: 'sa1235asd1',
+          players: [
+            PLAYER_DTO_STUB,
+            {
+              ...PLAYER_DTO_STUB,
+              id: '231abc',
+              playerId: 2,
+              username: 'testUser2',
+            },
+          ],
+          maxPlayers: 3,
+          currentWinner: [PLAYER_DTO_STUB],
+        },
+      },
+      whenData: {},
+      thenData: {
+        getCurrentIsQueueVisibleQuery: new IsQueueVisibleQuery(true),
+      },
+    },
+    {
+      givenData: {
+        getsOneRpsBoardDtoPortStub: {
+          id: 'sa1235asd1',
+          players: [
+            PLAYER_DTO_STUB,
+            {
+              ...PLAYER_DTO_STUB,
+              id: '231abc',
+              playerId: 2,
+              username: 'testUser2',
+            },
+          ],
+          maxPlayers: 2,
+          currentWinner: [PLAYER_DTO_STUB],
+        },
+      },
+      whenData: {},
+      thenData: {
+        getCurrentIsQueueVisibleQuery: new IsQueueVisibleQuery(false),
+      },
+    },
+  ].forEach(({ givenData, whenData, thenData }, i) =>
+    it(`should handle getCurrentIsQueueVisibleQuery #${i + 1}`, async () => {
+      const { getCurrentIsQueueVisibleQuery } = given(givenData);
+
+      const actual = await getCurrentIsQueueVisibleQuery();
+
+      expect(actual).toEqual(thenData.getCurrentIsQueueVisibleQuery);
+    })
+  );
+  [
+    {
+      givenData: {
+        selectsGameContextPortStub: {
+          currentPlayer: {
+            ...PLAYER_DTO_STUB,
+            id: '231abc',
+            playerId: 2,
+            wantNext: false,
+          },
+          othersPlayers: [
+            {
+              ...PLAYER_DTO_STUB,
+              playerId: 1,
+              wantNext: false,
+            },
+            {
+              ...PLAYER_DTO_STUB,
+              id: '312abc',
+              playerId: 3,
+              wantNext: false,
+            },
+          ],
+          queueStatus: true,
+          inGame: false,
+        },
+        getsOneRpsBoardDtoPortStub: {
+          ...RPS_BOARD_STUB,
+          id: 'sa1235asd1',
+          players: [
+            {
+              ...PLAYER_DTO_STUB,
+              playerId: 1,
+              wantNext: false,
+            },
+            {
+              ...PLAYER_DTO_STUB,
+              id: '231abc',
+              playerId: 2,
+              wantNext: false,
+            },
+            {
+              ...PLAYER_DTO_STUB,
+              id: '312abc',
+              playerId: 3,
+              wantNext: false,
+            },
+          ],
+          maxPlayers: 3,
+        },
+      },
+      whenData: new WantNextRoundCommand(true),
+      thenData: {
+        setsRpsBoardDtoPortSetSpyParams: {
+          ...RPS_BOARD_STUB,
+          id: 'sa1235asd1',
+          players: [
+            {
+              ...PLAYER_DTO_STUB,
+              playerId: 1,
+              wantNext: false,
+            },
+            {
+              ...PLAYER_DTO_STUB,
+              id: '231abc',
+              playerId: 2,
+              wantNext: true,
+            },
+            {
+              ...PLAYER_DTO_STUB,
+              id: '312abc',
+              playerId: 3,
+              wantNext: false,
+            },
+          ],
+          maxPlayers: 3,
+        },
+      },
+    },
+    {
+      givenData: {
+        selectsGameContextPortStub: {
+          currentPlayer: {
+            ...PLAYER_DTO_STUB,
+            playerId: 1,
+            wantNext: false,
+          },
+          othersPlayers: [
+            {
+              ...PLAYER_DTO_STUB,
+              id: '231abc',
+              playerId: 2,
+              wantNext: false,
+            },
+          ],
+          queueStatus: true,
+          inGame: false,
+        },
+        getsOneRpsBoardDtoPortStub: {
+          ...RPS_BOARD_STUB,
+          id: 'sa1235asd1',
+          players: [
+            {
+              ...PLAYER_DTO_STUB,
+              playerId: 1,
+              wantNext: true,
+            },
+            {
+              ...PLAYER_DTO_STUB,
+              id: '231abc',
+              playerId: 2,
+              wantNext: false,
+            },
+          ],
+          maxPlayers: 2,
+        },
+      },
+      whenData: new WantNextRoundCommand(false),
+      thenData: {
+        setsRpsBoardDtoPortSetSpyParams: {
+          ...RPS_BOARD_STUB,
+          id: 'sa1235asd1',
+          players: [
+            {
+              ...PLAYER_DTO_STUB,
+              playerId: 1,
+              wantNext: false,
+            },
+            {
+              ...PLAYER_DTO_STUB,
+              id: '231abc',
+              playerId: 2,
+              wantNext: false,
+            },
+          ],
+          maxPlayers: 2,
+        },
+      },
+    },
+  ].forEach(({ givenData, whenData, thenData }, i) =>
+    it(`should handle wantNextRound #${i + 1}`, async () => {
+      const { setsRpsBoardDtoPortSetSpy, wantNextRound } = given(givenData);
+      await wantNextRound(whenData);
+      expect(setsRpsBoardDtoPortSetSpy).toHaveBeenCalledWith(
+        thenData.setsRpsBoardDtoPortSetSpyParams
+      );
+    })
+  );
+  [
+    {
+      givenData: {
+        selectsGameContextPortStub: {
+          ...GAME_CONTEXT_STUB,
+          currentPlayer: {
+            ...PLAYER_DTO_STUB,
+            playerId: 1,
+            wantNext: true,
+          },
+        },
+        getsOneRpsBoardDtoPortStub: {
+          ...RPS_BOARD_STUB,
+          id: 'sa1235asd1',
+          players: [
+            {
+              ...PLAYER_DTO_STUB,
+              playerId: 1,
+              wantNext: true,
+            },
+            {
+              ...PLAYER_DTO_STUB,
+              id: '231abc',
+              playerId: 2,
+              wantNext: true,
+            },
+          ],
+          maxPlayers: 2,
+        },
+      },
+      whenData: new StartNextRoundCommand(),
+      thenData: {
+        patchesGameContextPortPatchSpyParams: {
+          ...GAME_CONTEXT_STUB,
+          currentPlayer: {
+            ...PLAYER_DTO_STUB,
+            playerId: 1,
+            choice: '',
+            isReady: false,
+            wantNext: false,
+          },
+        },
+        setsRpsBoardDtoPortSetSpyParams: {
+          ...RPS_BOARD_STUB,
+          id: 'sa1235asd1',
+          players: [
+            {
+              ...PLAYER_DTO_STUB,
+              playerId: 1,
+              choice: '',
+              isReady: false,
+              wantNext: false,
+            },
+            {
+              ...PLAYER_DTO_STUB,
+              id: '231abc',
+              playerId: 2,
+              choice: '',
+              isReady: false,
+              wantNext: false,
+            },
+          ],
+          currentWinner: [],
+          maxPlayers: 2,
+        },
+      },
+    },
+    {
+      givenData: {
+        selectsGameContextPortStub: {
+          ...GAME_CONTEXT_STUB,
+          currentPlayer: {
+            ...PLAYER_DTO_STUB,
+            playerId: 1,
+            wantNext: true,
+          },
+        },
+        getsOneRpsBoardDtoPortStub: {
+          ...RPS_BOARD_STUB,
+          id: 'sa1235asd1',
+          players: [
+            {
+              ...PLAYER_DTO_STUB,
+              playerId: 1,
+              wantNext: false,
+            },
+            {
+              ...PLAYER_DTO_STUB,
+              id: '231abc',
+              playerId: 2,
+              wantNext: true,
+            },
+          ],
+          maxPlayers: 2,
+        },
+      },
+      whenData: new StartNextRoundCommand(),
+      thenData: {
+        GameContextParams: {
+          ...GAME_CONTEXT_STUB,
+          currentPlayer: {
+            ...PLAYER_DTO_STUB,
+            playerId: 1,
+            wantNext: true,
+          },
+        },
+        RpsBoardDtoParams: {
+          ...RPS_BOARD_STUB,
+          id: 'sa1235asd1',
+          players: [
+            {
+              ...PLAYER_DTO_STUB,
+              playerId: 1,
+              wantNext: false,
+            },
+            {
+              ...PLAYER_DTO_STUB,
+              id: '231abc',
+              playerId: 2,
+              wantNext: true,
+            },
+          ],
+          maxPlayers: 2,
+        },
+      },
+    },
+  ].forEach(({ givenData, whenData, thenData }, i) =>
+    it(`should handle startNextRound #${i + 1}`, async () => {
+      const {
+        patchesGameContextPortPatchSpy,
+        setsRpsBoardDtoPortSetSpy,
+        startNextRound,
+      } = given(givenData);
+      await startNextRound(whenData);
+
+      if (thenData.patchesGameContextPortPatchSpyParams) {
+        expect(patchesGameContextPortPatchSpy).toHaveBeenCalledWith(
+          thenData.patchesGameContextPortPatchSpyParams
+        );
+      }
+
+      if (thenData.setsRpsBoardDtoPortSetSpyParams) {
+        expect(setsRpsBoardDtoPortSetSpy).toHaveBeenCalledWith(
+          thenData.setsRpsBoardDtoPortSetSpyParams
+        );
+      }
+
+      if (
+        !thenData.patchesGameContextPortPatchSpyParams &&
+        !thenData.setsRpsBoardDtoPortSetSpyParams
+      ) {
+        expect(givenData.getsOneRpsBoardDtoPortStub).toEqual(
+          thenData.RpsBoardDtoParams
+        );
+        expect(givenData.selectsGameContextPortStub).toEqual(
+          thenData.GameContextParams
+        );
+      }
     })
   );
 });
