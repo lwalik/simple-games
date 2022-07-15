@@ -42,7 +42,32 @@ import { WantNextRoundCommand } from '../ports/primary/command/want-next-round.c
 import { WANT_NEXT_ROUND_COMMAND } from '../ports/primary/command/want-next-round.command-port';
 import { StartNextRoundCommand } from '../ports/primary/command/start-next-round.command';
 import { START_NEXT_ROUND_COMMAND } from '../ports/primary/command/start-next-round.command-port';
+import { PlayerInContextQuery } from '../ports/primary/query/player-in-context.query';
+import { InGameQuery } from '../ports/primary/query/in-game.query';
+import { IsSelectPlayerCountVisibleQuery } from '../ports/primary/query/is-select-player-count-visible.query';
+import { DisplayPlayerOnBoardQuery } from '../ports/primary/query/display-player-on-board.query';
 import { SetActivePlayersCommand } from '../ports/primary/command/set-active-player.command';
+
+const PLAYER_DTO_STUB: PlayerDTO = {
+  id: '123abc',
+  playerId: 1,
+  username: 'testUser',
+  isActive: false,
+  isReady: false,
+  choice: '',
+  wantNext: false,
+};
+
+const RPS_BOARD_STUB: RpsBoardDTO = {
+  id: 'sa1235asd1',
+  players: [
+    PLAYER_DTO_STUB,
+    { ...PLAYER_DTO_STUB, id: '231abc', playerId: 2, username: 'testUser2' },
+    { ...PLAYER_DTO_STUB, id: '312abc', playerId: 3, username: 'testUser3' },
+  ],
+  maxPlayers: 3,
+  currentWinner: [PLAYER_DTO_STUB],
+};
 
 describe('GameState', () => {
   const given = (
@@ -185,4 +210,867 @@ describe('GameState', () => {
           .toPromise(),
     };
   };
+  [
+    {
+      givenData: {
+        patchesGameContextPortPatchSpy: {},
+        selectsGameContextPortStub: {
+          currentPlayer: {
+            id: '123abc',
+            playerId: 1,
+            username: 'testUser',
+            isActive: false,
+            isReady: false,
+            choice: '',
+            wantNext: false,
+          },
+          othersPlayers: [
+            {
+              ...PLAYER_DTO_STUB,
+              id: '231abc',
+              playerId: 2,
+              username: 'testUser2',
+            },
+            {
+              ...PLAYER_DTO_STUB,
+              id: '312abc',
+              playerId: 3,
+              username: 'testUser3',
+            },
+          ],
+          queueStatus: true,
+          inGame: false,
+        },
+      },
+      whenData: new SetUsernameCommand('Bob'),
+      thenData: {
+        patchesGameContextPortPatchSpyParams: {
+          currentPlayer: {
+            id: '123abc',
+            playerId: 1,
+            username: 'Bob',
+            isActive: false,
+            isReady: false,
+            choice: '',
+            wantNext: false,
+          },
+          queueStatus: false,
+        },
+      },
+    },
+    {
+      givenData: {
+        patchesGameContextPortPatchSpy: {},
+        selectsGameContextPortStub: {
+          currentPlayer: {
+            ...PLAYER_DTO_STUB,
+            id: '231abc',
+            playerId: 2,
+            username: 'testUser2',
+          },
+          othersPlayers: [
+            {
+              id: '123abc',
+              playerId: 1,
+              username: 'testUser',
+              isActive: false,
+              isReady: false,
+              choice: '',
+              wantNext: false,
+            },
+            {
+              ...PLAYER_DTO_STUB,
+              id: '312abc',
+              playerId: 3,
+              username: 'testUser3',
+            },
+          ],
+          queueStatus: true,
+          inGame: false,
+        },
+      },
+      whenData: new SetUsernameCommand('John'),
+      thenData: {
+        patchesGameContextPortPatchSpyParams: {
+          currentPlayer: {
+            ...PLAYER_DTO_STUB,
+            id: '231abc',
+            playerId: 2,
+            username: 'John',
+          },
+          queueStatus: false,
+        },
+      },
+    },
+  ].forEach(({ givenData, whenData, thenData }, i) =>
+    it(`should handle setUsername #${i + 1}`, async () => {
+      const { patchesGameContextPortPatchSpy, setUsername } = given(givenData);
+      await setUsername(whenData);
+      expect(patchesGameContextPortPatchSpy).toHaveBeenCalledWith(
+        thenData.patchesGameContextPortPatchSpyParams
+      );
+    })
+  );
+  [
+    {
+      givenData: {},
+      whenData: new TakePlayerCommand(PLAYER_DTO_STUB),
+      thenData: {
+        setsStateGameContextPortSetStateSpyParams: {
+          currentPlayer: PLAYER_DTO_STUB,
+          othersPlayers: [],
+          queueStatus: true,
+          inGame: false,
+        },
+      },
+    },
+    {
+      givenData: {},
+      whenData: new TakePlayerCommand({ ...PLAYER_DTO_STUB, playerId: 2 }),
+      thenData: {
+        setsStateGameContextPortSetStateSpyParams: {
+          currentPlayer: { ...PLAYER_DTO_STUB, playerId: 2 },
+          othersPlayers: [],
+          queueStatus: true,
+          inGame: false,
+        },
+      },
+    },
+  ].forEach(({ givenData, whenData, thenData }, i) =>
+    it(`should handle takePlayer #${i + 1}`, async () => {
+      const { setsStateGameContextPortSetStateSpy, takePlayer } =
+        given(givenData);
+      await takePlayer(whenData);
+      expect(setsStateGameContextPortSetStateSpy).toHaveBeenCalledWith(
+        thenData.setsStateGameContextPortSetStateSpyParams
+      );
+    })
+  );
+  [
+    {
+      givenData: { getsOneRpsBoardDtoPortStub: RPS_BOARD_STUB },
+      whenData: {},
+      thenData: {
+        patchesGameContextPortPatchSpyParams: {
+          currentPlayer: {},
+          othersPlayers: [],
+        },
+        setsRpsBoardDtoPortSetSpyParams: {
+          ...RPS_BOARD_STUB,
+          players: [],
+        },
+      },
+    },
+  ].forEach(({ givenData, whenData, thenData }, i) =>
+    it(`should handle initBoard #${i + 1}`, async () => {
+      const {
+        patchesGameContextPortPatchSpy,
+        setsRpsBoardDtoPortSetSpy,
+        initBoard,
+      } = given(givenData);
+      await initBoard(whenData);
+      expect(patchesGameContextPortPatchSpy).toHaveBeenCalledWith(
+        thenData.patchesGameContextPortPatchSpyParams
+      );
+      expect(setsRpsBoardDtoPortSetSpy).toHaveBeenCalledWith(
+        thenData.setsRpsBoardDtoPortSetSpyParams
+      );
+    })
+  );
+  [
+    {
+      givenData: {
+        selectsGameContextPortStub: {
+          currentPlayer: { ...PLAYER_DTO_STUB, playerId: 1, isActive: true },
+          othersPlayers: [{ ...PLAYER_DTO_STUB, playerId: 2 }],
+          queueStatus: false,
+          inGame: false,
+        },
+      },
+      whenData: {},
+      thenData: {
+        setsStateGameContextPortSetStateSpyParams: {
+          currentPlayer: { ...PLAYER_DTO_STUB, playerId: 1, isActive: false },
+          othersPlayers: [{ ...PLAYER_DTO_STUB, playerId: 2 }],
+          queueStatus: false,
+          inGame: false,
+        },
+        setsPlayerDtoPortSetSpyParams: {
+          id: PLAYER_DTO_STUB.id,
+          isActive: false,
+        },
+      },
+    },
+    {
+      givenData: {
+        selectsGameContextPortStub: {
+          currentPlayer: { ...PLAYER_DTO_STUB, playerId: 1, isActive: false },
+          othersPlayers: [{ ...PLAYER_DTO_STUB, playerId: 2 }],
+          queueStatus: false,
+          inGame: false,
+        },
+      },
+      whenData: {},
+      thenData: {
+        setsStateGameContextPortSetStateSpyParams: {
+          currentPlayer: { ...PLAYER_DTO_STUB, playerId: 1, isActive: true },
+          othersPlayers: [{ ...PLAYER_DTO_STUB, playerId: 2 }],
+          queueStatus: false,
+          inGame: false,
+        },
+        setsPlayerDtoPortSetSpyParams: {
+          id: PLAYER_DTO_STUB.id,
+          isActive: true,
+        },
+      },
+    },
+  ].forEach(({ givenData, whenData, thenData }, i) =>
+    it(`should handle switchActiveStatus #${i + 1}`, async () => {
+      const {
+        setsStateGameContextPortSetStateSpy,
+        setsPlayerDtoPortSetSpy,
+        switchActiveStatus,
+      } = given(givenData);
+      await switchActiveStatus(whenData);
+      expect(setsStateGameContextPortSetStateSpy).toHaveBeenCalledWith(
+        thenData.setsStateGameContextPortSetStateSpyParams
+      );
+      expect(setsPlayerDtoPortSetSpy).toHaveBeenCalledWith(
+        thenData.setsPlayerDtoPortSetSpyParams
+      );
+    })
+  );
+  [
+    {
+      givenData: {
+        selectsGameContextPortStub: {
+          currentPlayer: { ...PLAYER_DTO_STUB, playerId: 1 },
+          othersPlayers: [{ ...PLAYER_DTO_STUB, playerId: 2 }],
+          queueStatus: false,
+          inGame: false,
+        },
+      },
+      whenData: {},
+      thenData: {
+        getCurrentPlayerInContextQuery: new PlayerInContextQuery({
+          ...PLAYER_DTO_STUB,
+          playerId: 1,
+        }),
+      },
+    },
+    {
+      givenData: {
+        selectsGameContextPortStub: {
+          currentPlayer: { ...PLAYER_DTO_STUB, playerId: 3 },
+          othersPlayers: [{ ...PLAYER_DTO_STUB, playerId: 2 }],
+          queueStatus: false,
+          inGame: false,
+        },
+      },
+      whenData: {},
+      thenData: {
+        getCurrentPlayerInContextQuery: new PlayerInContextQuery({
+          ...PLAYER_DTO_STUB,
+          playerId: 3,
+        }),
+      },
+    },
+  ].forEach(({ givenData, whenData, thenData }, i) =>
+    it(`should handle getCurrentPlayerInContextQuery #${i + 1}`, async () => {
+      const { getCurrentPlayerInContextQuery } = given(givenData);
+
+      const actual = await getCurrentPlayerInContextQuery();
+
+      expect(actual).toEqual(thenData.getCurrentPlayerInContextQuery);
+    })
+  );
+  [
+    {
+      givenData: {
+        getsOneRpsBoardDtoPortStub: {
+          ...RPS_BOARD_STUB,
+          players: [
+            PLAYER_DTO_STUB,
+            {
+              ...PLAYER_DTO_STUB,
+              id: '231abc',
+              playerId: 2,
+              username: 'testUser2',
+            },
+            {
+              ...PLAYER_DTO_STUB,
+              id: '312abc',
+              playerId: 3,
+              username: 'testUser3',
+              choice: '',
+            },
+          ],
+        },
+        selectsGameContextPortStub: {
+          currentPlayer: { ...PLAYER_DTO_STUB, playerId: 3, choice: '' },
+          othersPlayers: [{ ...PLAYER_DTO_STUB, playerId: 2 }],
+          queueStatus: false,
+          inGame: false,
+        },
+      },
+      whenData: new SetChoiceCommand('rock'),
+      thenData: {
+        patchesGameContextPortPatchSpyParams: {
+          currentPlayer: { ...PLAYER_DTO_STUB, playerId: 3, choice: 'rock' },
+          othersPlayers: [{ ...PLAYER_DTO_STUB, playerId: 2 }],
+          queueStatus: false,
+          inGame: false,
+        },
+        setsRpsBoardDtoPortSetSpyParams: {
+          ...RPS_BOARD_STUB,
+          players: [
+            PLAYER_DTO_STUB,
+            {
+              ...PLAYER_DTO_STUB,
+              id: '231abc',
+              playerId: 2,
+              username: 'testUser2',
+            },
+            {
+              ...PLAYER_DTO_STUB,
+              id: '312abc',
+              playerId: 3,
+              username: 'testUser3',
+              choice: 'rock',
+            },
+          ],
+        },
+      },
+    },
+    {
+      givenData: {
+        getsOneRpsBoardDtoPortStub: {
+          ...RPS_BOARD_STUB,
+          players: [
+            PLAYER_DTO_STUB,
+            {
+              ...PLAYER_DTO_STUB,
+              id: '231abc',
+              playerId: 2,
+              username: 'testUser2',
+            },
+            {
+              ...PLAYER_DTO_STUB,
+              id: '312abc',
+              playerId: 3,
+              username: 'testUser3',
+              choice: '',
+            },
+          ],
+        },
+        selectsGameContextPortStub: {
+          currentPlayer: { ...PLAYER_DTO_STUB, playerId: 3, choice: '' },
+          othersPlayers: [{ ...PLAYER_DTO_STUB, playerId: 2 }],
+          queueStatus: false,
+          inGame: false,
+        },
+      },
+      whenData: new SetChoiceCommand('paper'),
+      thenData: {
+        patchesGameContextPortPatchSpyParams: {
+          currentPlayer: { ...PLAYER_DTO_STUB, playerId: 3, choice: 'paper' },
+          othersPlayers: [{ ...PLAYER_DTO_STUB, playerId: 2 }],
+          queueStatus: false,
+          inGame: false,
+        },
+        setsRpsBoardDtoPortSetSpyParams: {
+          ...RPS_BOARD_STUB,
+          players: [
+            PLAYER_DTO_STUB,
+            {
+              ...PLAYER_DTO_STUB,
+              id: '231abc',
+              playerId: 2,
+              username: 'testUser2',
+            },
+            {
+              ...PLAYER_DTO_STUB,
+              id: '312abc',
+              playerId: 3,
+              username: 'testUser3',
+              choice: 'paper',
+            },
+          ],
+        },
+      },
+    },
+    {
+      givenData: {
+        getsOneRpsBoardDtoPortStub: {
+          ...RPS_BOARD_STUB,
+          players: [
+            PLAYER_DTO_STUB,
+            {
+              ...PLAYER_DTO_STUB,
+              id: '231abc',
+              playerId: 2,
+              username: 'testUser2',
+            },
+            {
+              ...PLAYER_DTO_STUB,
+              id: '312abc',
+              playerId: 3,
+              username: 'testUser3',
+              choice: '',
+            },
+          ],
+        },
+        selectsGameContextPortStub: {
+          currentPlayer: { ...PLAYER_DTO_STUB, playerId: 3, choice: '' },
+          othersPlayers: [{ ...PLAYER_DTO_STUB, playerId: 2 }],
+          queueStatus: false,
+          inGame: false,
+        },
+      },
+      whenData: new SetChoiceCommand('scissors'),
+      thenData: {
+        patchesGameContextPortPatchSpyParams: {
+          currentPlayer: {
+            ...PLAYER_DTO_STUB,
+            playerId: 3,
+            choice: 'scissors',
+          },
+          othersPlayers: [{ ...PLAYER_DTO_STUB, playerId: 2 }],
+          queueStatus: false,
+          inGame: false,
+        },
+        setsRpsBoardDtoPortSetSpyParams: {
+          ...RPS_BOARD_STUB,
+          players: [
+            PLAYER_DTO_STUB,
+            {
+              ...PLAYER_DTO_STUB,
+              id: '231abc',
+              playerId: 2,
+              username: 'testUser2',
+            },
+            {
+              ...PLAYER_DTO_STUB,
+              id: '312abc',
+              playerId: 3,
+              username: 'testUser3',
+              choice: 'scissors',
+            },
+          ],
+        },
+      },
+    },
+  ].forEach(({ givenData, whenData, thenData }, i) =>
+    it(`should handle setChoice #${i + 1}`, async () => {
+      const {
+        patchesGameContextPortPatchSpy,
+        setsRpsBoardDtoPortSetSpy,
+        setChoice,
+      } = given(givenData);
+      await setChoice(whenData);
+      expect(patchesGameContextPortPatchSpy).toHaveBeenCalledWith(
+        thenData.patchesGameContextPortPatchSpyParams
+      );
+      expect(setsRpsBoardDtoPortSetSpy).toHaveBeenCalledWith(
+        thenData.setsRpsBoardDtoPortSetSpyParams
+      );
+    })
+  );
+  [
+    {
+      givenData: {
+        getsOneRpsBoardDtoPortStub: {
+          ...RPS_BOARD_STUB,
+          players: [
+            PLAYER_DTO_STUB,
+            {
+              ...PLAYER_DTO_STUB,
+              id: '231abc',
+              playerId: 2,
+              username: 'testUser2',
+            },
+            {
+              ...PLAYER_DTO_STUB,
+              id: '312abc',
+              playerId: 3,
+              username: 'testUser3',
+              choice: '',
+              isReady: false,
+            },
+          ],
+        },
+        selectsGameContextPortStub: {
+          currentPlayer: {
+            ...PLAYER_DTO_STUB,
+            playerId: 3,
+            choice: '',
+            isReady: false,
+          },
+          othersPlayers: [{ ...PLAYER_DTO_STUB, playerId: 2 }],
+          queueStatus: false,
+          inGame: false,
+        },
+      },
+      whenData: new SwitchReadyStatusCommand(),
+      thenData: {
+        setsRpsBoardDtoPortSetSpyParams: {
+          ...RPS_BOARD_STUB,
+          players: [
+            PLAYER_DTO_STUB,
+            {
+              ...PLAYER_DTO_STUB,
+              id: '231abc',
+              playerId: 2,
+              username: 'testUser2',
+            },
+            { ...PLAYER_DTO_STUB, playerId: 3, choice: '', isReady: true },
+          ],
+        },
+        patchesGameContextPortPatchSpyParams: {
+          currentPlayer: {
+            ...PLAYER_DTO_STUB,
+            playerId: 3,
+            choice: '',
+            isReady: true,
+          },
+          othersPlayers: [{ ...PLAYER_DTO_STUB, playerId: 2 }],
+          queueStatus: false,
+          inGame: false,
+        },
+      },
+    },
+    {
+      givenData: {
+        getsOneRpsBoardDtoPortStub: {
+          ...RPS_BOARD_STUB,
+          players: [
+            PLAYER_DTO_STUB,
+            {
+              ...PLAYER_DTO_STUB,
+              id: '231abc',
+              playerId: 2,
+              username: 'testUser2',
+            },
+            {
+              ...PLAYER_DTO_STUB,
+              id: '312abc',
+              playerId: 3,
+              username: 'testUser3',
+              choice: '',
+              isReady: true,
+            },
+          ],
+        },
+        selectsGameContextPortStub: {
+          currentPlayer: {
+            ...PLAYER_DTO_STUB,
+            playerId: 3,
+            choice: '',
+            isReady: true,
+          },
+          othersPlayers: [{ ...PLAYER_DTO_STUB, playerId: 2 }],
+          queueStatus: false,
+          inGame: false,
+        },
+      },
+      whenData: new SwitchReadyStatusCommand(),
+      thenData: {
+        setsRpsBoardDtoPortSetSpyParams: {
+          ...RPS_BOARD_STUB,
+          players: [
+            PLAYER_DTO_STUB,
+            {
+              ...PLAYER_DTO_STUB,
+              id: '231abc',
+              playerId: 2,
+              username: 'testUser2',
+            },
+            { ...PLAYER_DTO_STUB, playerId: 3, choice: '', isReady: false },
+          ],
+        },
+        patchesGameContextPortPatchSpyParams: {
+          currentPlayer: {
+            ...PLAYER_DTO_STUB,
+            playerId: 3,
+            choice: '',
+            isReady: false,
+          },
+          othersPlayers: [{ ...PLAYER_DTO_STUB, playerId: 2 }],
+          queueStatus: false,
+          inGame: false,
+        },
+      },
+    },
+  ].forEach(({ givenData, whenData, thenData }, i) =>
+    it(`should handle switchReadyStatus #${i + 1}`, async () => {
+      const {
+        setsRpsBoardDtoPortSetSpy,
+        patchesGameContextPortPatchSpy,
+        switchReadyStatus,
+      } = given(givenData);
+      await switchReadyStatus(whenData);
+      expect(setsRpsBoardDtoPortSetSpy).toHaveBeenCalledWith(
+        thenData.setsRpsBoardDtoPortSetSpyParams
+      );
+      expect(patchesGameContextPortPatchSpy).toHaveBeenCalledWith(
+        thenData.patchesGameContextPortPatchSpyParams
+      );
+    })
+  );
+  [
+    {
+      givenData: {},
+      whenData: new ResetQueueStatusCommand(),
+      thenData: { patchesGameContextPortPatchSpyParams: { queueStatus: true } },
+    },
+  ].forEach(({ givenData, whenData, thenData }, i) =>
+    it(`should handle resetQueueStatus #${i + 1}`, async () => {
+      const { patchesGameContextPortPatchSpy, resetQueueStatus } =
+        given(givenData);
+      await resetQueueStatus(whenData);
+      expect(patchesGameContextPortPatchSpy).toHaveBeenCalledWith(
+        thenData.patchesGameContextPortPatchSpyParams
+      );
+    })
+  );
+  [
+    {
+      givenData: {
+        selectsGameContextPortStub: {
+          currentPlayer: {
+            ...PLAYER_DTO_STUB,
+            playerId: 3,
+            choice: '',
+            isReady: false,
+          },
+          othersPlayers: [{ ...PLAYER_DTO_STUB, playerId: 2 }],
+          queueStatus: false,
+          inGame: false,
+        },
+      },
+      whenData: {},
+      thenData: { getCurrentInGameQuery: new InGameQuery(false) },
+    },
+    {
+      givenData: {
+        selectsGameContextPortStub: {
+          currentPlayer: {
+            ...PLAYER_DTO_STUB,
+            playerId: 3,
+            choice: '',
+            isReady: false,
+          },
+          othersPlayers: [{ ...PLAYER_DTO_STUB, playerId: 2 }],
+          queueStatus: false,
+          inGame: true,
+        },
+      },
+      whenData: {},
+      thenData: { getCurrentInGameQuery: new InGameQuery(true) },
+    },
+  ].forEach(({ givenData, whenData, thenData }, i) =>
+    it(`should handle getCurrentInGameQuery #${i + 1}`, async () => {
+      const { getCurrentInGameQuery } = given(givenData);
+
+      const actual = await getCurrentInGameQuery();
+
+      expect(actual).toEqual(thenData.getCurrentInGameQuery);
+    })
+  );
+  [
+    {
+      givenData: {
+        getsOneRpsBoardDtoPortStub: {
+          ...RPS_BOARD_STUB,
+          players: [
+            PLAYER_DTO_STUB,
+            {
+              ...PLAYER_DTO_STUB,
+              id: '231abc',
+              playerId: 2,
+              username: 'testUser2',
+            },
+            {
+              ...PLAYER_DTO_STUB,
+              id: '312abc',
+              playerId: 3,
+              username: 'testUser3',
+              choice: '',
+              isReady: true,
+            },
+          ],
+        },
+      },
+      whenData: {},
+      thenData: {
+        getCurrentIsSelectPlayerCountVisibleQuery:
+          new IsSelectPlayerCountVisibleQuery(false),
+      },
+    },
+    {
+      givenData: {
+        getsOneRpsBoardDtoPortStub: {
+          ...RPS_BOARD_STUB,
+          players: [],
+        },
+      },
+      whenData: {},
+      thenData: {
+        getCurrentIsSelectPlayerCountVisibleQuery:
+          new IsSelectPlayerCountVisibleQuery(true),
+      },
+    },
+  ].forEach(({ givenData, whenData, thenData }, i) =>
+    it(`should handle getCurrentIsSelectPlayerCountVisibleQuery #${
+      i + 1
+    }`, async () => {
+      const { getCurrentIsSelectPlayerCountVisibleQuery } = given(givenData);
+
+      const actual = await getCurrentIsSelectPlayerCountVisibleQuery();
+
+      expect(actual).toEqual(
+        thenData.getCurrentIsSelectPlayerCountVisibleQuery
+      );
+    })
+  );
+  [
+    {
+      givenData: {
+        getsOneRpsBoardDtoPortStub: {
+          ...RPS_BOARD_STUB,
+          maxPlayers: 3,
+          players: [
+            {
+              ...PLAYER_DTO_STUB,
+              id: '321abc',
+              playerId: 1,
+              username: 'testUser1',
+              choice: 'paper',
+              isReady: true,
+              wantNext: false,
+            },
+            {
+              ...PLAYER_DTO_STUB,
+              id: '231abc',
+              playerId: 2,
+              username: 'testUser2',
+              choice: 'rock',
+              isReady: false,
+              wantNext: false,
+            },
+            {
+              ...PLAYER_DTO_STUB,
+              id: '312abc',
+              playerId: 3,
+              username: 'testUser3',
+              choice: '',
+              isReady: false,
+              wantNext: false,
+            },
+          ],
+        },
+        selectsGameContextPortStub: {
+          currentPlayer: {
+            ...PLAYER_DTO_STUB,
+            username: 'testUser3',
+            playerId: 3,
+          },
+          othersPlayers: [{ ...PLAYER_DTO_STUB, playerId: 2 }],
+          queueStatus: false,
+          inGame: false,
+        },
+      },
+      whenData: {},
+      thenData: {
+        getAllDisplayPlayerOnBoardQuery: [
+          new DisplayPlayerOnBoardQuery(
+            'testUser1',
+            { name: 'paper', isVisible: false },
+            true,
+            false,
+            false
+          ),
+          new DisplayPlayerOnBoardQuery(
+            'testUser2',
+            { name: 'rock', isVisible: false },
+            false,
+            false,
+            false
+          ),
+          new DisplayPlayerOnBoardQuery(
+            'testUser3',
+            { name: '', isVisible: true },
+            false,
+            true,
+            false
+          ),
+        ],
+      },
+    },
+    {
+      givenData: {
+        getsOneRpsBoardDtoPortStub: {
+          ...RPS_BOARD_STUB,
+          maxPlayers: 2,
+          players: [
+            {
+              ...PLAYER_DTO_STUB,
+              id: '321abc',
+              playerId: 1,
+              username: 'testUser1',
+              choice: 'paper',
+              isReady: true,
+              wantNext: false,
+            },
+            {
+              ...PLAYER_DTO_STUB,
+              id: '231abc',
+              playerId: 2,
+              username: 'testUser2',
+              choice: 'rock',
+              isReady: true,
+              wantNext: false,
+            },
+          ],
+        },
+        selectsGameContextPortStub: {
+          currentPlayer: {
+            ...PLAYER_DTO_STUB,
+            username: 'testUser1',
+            playerId: 1,
+          },
+          othersPlayers: [{ ...PLAYER_DTO_STUB, playerId: 2 }],
+          queueStatus: false,
+          inGame: false,
+        },
+      },
+      whenData: {},
+      thenData: {
+        getAllDisplayPlayerOnBoardQuery: [
+          new DisplayPlayerOnBoardQuery(
+            'testUser1',
+            { name: 'paper', isVisible: true },
+            true,
+            true,
+            false
+          ),
+          new DisplayPlayerOnBoardQuery(
+            'testUser2',
+            { name: 'rock', isVisible: true },
+            true,
+            false,
+            false
+          ),
+        ],
+      },
+    },
+  ].forEach(({ givenData, whenData, thenData }, i) =>
+    it(`should handle getAllDisplayPlayerOnBoardQuery #${i + 1}`, async () => {
+      const { getAllDisplayPlayerOnBoardQuery } = given(givenData);
+
+      const actual = await getAllDisplayPlayerOnBoardQuery();
+
+      expect(actual).toEqual(thenData.getAllDisplayPlayerOnBoardQuery);
+    })
+  );
 });
