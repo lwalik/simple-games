@@ -56,7 +56,6 @@ export class QueuePlayersComponent {
   onPlusButtonClicked(player: PlayerDTO): void {
     this._takePlayerCommand
       .takePlayer(new TakePlayerCommand(player))
-      .pipe(take(1))
       .subscribe(() =>
         this.dialog.open(SetUsernameModalComponent, {
           width: '500px',
