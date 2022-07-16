@@ -110,6 +110,7 @@ export class GameState
     private _setsStateGameContext: SetsStateGameContextPort
   ) {}
 
+  // TODO write Test
   selectPlayersCount(command: SelectPlayersCountCommand): Observable<void> {
     return this._setsRpsBoardDto
       .set({
@@ -124,7 +125,7 @@ export class GameState
         )
       );
   }
-
+  // TODO write Test
   setActiveAllPlayers(command: SetActiveAllPlayersCommand): Observable<void> {
     return this._getsAllPlayerDto.getAll().pipe(
       take(1),
@@ -137,14 +138,14 @@ export class GameState
       )
     );
   }
-
+  // TODO write Test
   setActivePlayer(command: SetActivePlayersCommand): Observable<void> {
     return this._setsPlayerDto.set({
       id: command.playerId,
       isActive: command.isActive,
     });
   }
-
+  // TODO write Test
   joinPlayer(command: JoinPlayerCommand): Observable<void> {
     return combineLatest([
       this._selectsGameContext.select(),
@@ -305,6 +306,7 @@ export class GameState
             take(1),
             switchMap(() =>
               this._patchesGameContext.patch({
+                ...context,
                 currentPlayer: {
                   ...context.currentPlayer,
                   isReady: !context.currentPlayer.isReady,
@@ -332,7 +334,6 @@ export class GameState
         )
       );
   }
-
   getCurrentIsSelectPlayerCountVisibleQuery(): Observable<IsSelectPlayerCountVisibleQuery> {
     return this._getsOneRpsBoardDto
       .getOne()
