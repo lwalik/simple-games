@@ -5,7 +5,8 @@
     "defaultBase": "main"
   },
   "cli": {
-    "packageManager": "npm"
+    "packageManager": "npm",
+    "analytics": false
   },
   "implicitDependencies": {
     "package.json": {

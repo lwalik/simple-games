@@ -1,0 +1,14 @@
+{
+  "projects": {
+    "default": "simple-games-ed744"
+  },
+  "targets": {
+    "simple-games-ed744": {
+      "hosting": {
+        "main": [
+          "simple-games-ed744"
+        ]
+      }
+    }
+  }
+}

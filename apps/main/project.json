@@ -5,9 +5,7 @@
   "targets": {
     "build": {
       "executor": "@angular-devkit/build-angular:browser",
-      "outputs": [
-        "{options.outputPath}"
-      ],
+      "outputs": ["{options.outputPath}"],
       "options": {
         "outputPath": "dist/apps/main",
         "index": "apps/main/src/index.html",
@@ -15,10 +13,7 @@
         "polyfills": "apps/main/src/polyfills.ts",
         "tsConfig": "apps/main/tsconfig.app.json",
         "inlineStyleLanguage": "scss",
-        "assets": [
-          "apps/main/src/favicon.ico",
-          "apps/main/src/assets"
-        ],
+        "assets": ["apps/main/src/favicon.ico", "apps/main/src/assets"],
         "styles": [
           "./node_modules/@angular/material/prebuilt-themes/purple-green.css",
           "apps/main/src/styles.scss"
@@ -30,8 +25,8 @@
           "budgets": [
             {
               "type": "initial",
-              "maximumWarning": "500kb",
-              "maximumError": "1mb"
+              "maximumWarning": "2mb",
+              "maximumError": "3mb"
             },
             {
               "type": "anyComponentStyle",
@@ -79,17 +74,12 @@
     "lint": {
       "executor": "@nrwl/linter:eslint",
       "options": {
-        "lintFilePatterns": [
-          "apps/main/**/*.ts",
-          "apps/main/**/*.html"
-        ]
+        "lintFilePatterns": ["apps/main/**/*.ts", "apps/main/**/*.html"]
       }
     },
     "test": {
       "executor": "@nrwl/jest:jest",
-      "outputs": [
-        "coverage/apps/main"
-      ],
+      "outputs": ["coverage/apps/main"],
       "options": {
         "jestConfig": "apps/main/jest.config.ts",
         "passWithNoTests": true
