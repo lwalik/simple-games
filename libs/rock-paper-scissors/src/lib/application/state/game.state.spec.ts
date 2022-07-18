@@ -44,6 +44,7 @@ import { StartNextRoundCommand } from '../ports/primary/command/start-next-round
 import { START_NEXT_ROUND_COMMAND } from '../ports/primary/command/start-next-round.command-port';
 import { SetCurrentWinnerCommand } from '../ports/primary/command/set-current-winner.command';
 import { SET_CURRENT_WINNER_COMMAND } from '../ports/primary/command/set-current-winner.command-port';
+import { GETS_CURRENT_QUEUE_STATUS_QUERY } from '../ports/primary/query/gets-current-queue-status.query-port';
 import { PlayerInContextQuery } from '../ports/primary/query/player-in-context.query';
 import { InGameQuery } from '../ports/primary/query/in-game.query';
 import { IsSelectPlayerCountVisibleQuery } from '../ports/primary/query/is-select-player-count-visible.query';
@@ -51,6 +52,7 @@ import { DisplayPlayerOnBoardQuery } from '../ports/primary/query/display-player
 import { DisplayWinnerQuery } from '../ports/primary/query/display-winner.query';
 import { IsQueueVisibleQuery } from '../ports/primary/query/is-queue-visible.query';
 import { SetActivePlayersCommand } from '../ports/primary/command/set-active-player.command';
+import { QueueStatusQuery } from '../ports/primary/query/queue-status.query';
 
 const PLAYER_DTO_STUB: PlayerDTO = {
   id: '123abc',
@@ -79,14 +81,6 @@ const GAME_CONTEXT_STUB: GameContext = {
     playerId: 1,
     wantNext: false,
   },
-  othersPlayers: [
-    {
-      ...PLAYER_DTO_STUB,
-      id: '231abc',
-      playerId: 2,
-      wantNext: false,
-    },
-  ],
   queueStatus: true,
   inGame: false,
 };
@@ -234,6 +228,10 @@ describe('GameState', () => {
         TestBed.inject(SET_CURRENT_WINNER_COMMAND)
           .setCurrentWinner(command)
           .toPromise(),
+      getCurrentQueueStatusQuery: () =>
+        TestBed.inject(GETS_CURRENT_QUEUE_STATUS_QUERY)
+          .getCurrentQueueStatusQuery()
+          .toPromise(),
     };
   };
   [
@@ -344,7 +342,6 @@ describe('GameState', () => {
       thenData: {
         setsStateGameContextPortSetStateSpyParams: {
           currentPlayer: PLAYER_DTO_STUB,
-          othersPlayers: [],
           queueStatus: true,
           inGame: false,
         },
@@ -356,7 +353,6 @@ describe('GameState', () => {
       thenData: {
         setsStateGameContextPortSetStateSpyParams: {
           currentPlayer: { ...PLAYER_DTO_STUB, playerId: 2 },
-          othersPlayers: [],
           queueStatus: true,
           inGame: false,
         },
@@ -379,7 +375,8 @@ describe('GameState', () => {
       thenData: {
         patchesGameContextPortPatchSpyParams: {
           currentPlayer: {},
-          othersPlayers: [],
+          queueStatus: true,
+          inGame: false,
         },
         setsRpsBoardDtoPortSetSpyParams: {
           ...RPS_BOARD_STUB,
@@ -1832,6 +1829,36 @@ describe('GameState', () => {
           thenData.GameContextParams
         );
       }
+    })
+  );
+  [
+    {
+      givenData: {
+        selectsGameContextPortStub: {
+          ...GAME_CONTEXT_STUB,
+          queueStatus: false,
+        },
+      },
+      whenData: {},
+      thenData: { getCurrentQueueStatusQuery: new QueueStatusQuery(false) },
+    },
+    {
+      givenData: {
+        selectsGameContextPortStub: {
+          ...GAME_CONTEXT_STUB,
+          queueStatus: true,
+        },
+      },
+      whenData: {},
+      thenData: { getCurrentQueueStatusQuery: new QueueStatusQuery(true) },
+    },
+  ].forEach(({ givenData, whenData, thenData }, i) =>
+    it(`should handle getCurrentQueueStatusQuery #${i + 1}`, async () => {
+      const { getCurrentQueueStatusQuery } = given(givenData);
+
+      const actual = await getCurrentQueueStatusQuery();
+
+      expect(actual).toEqual(thenData.getCurrentQueueStatusQuery);
     })
   );
 });

@@ -1,7 +1,7 @@
 <div class="mt-4 w-full" *ngIf="player$ | async as player">
   <div
     class="flex justify-center items-center gap-4"
-    *ngIf="player.current.isActive && !(inGame$ | async)?.inGame"
+    *ngIf="!(inGame$ | async)?.inGame && !(queueStatus$ | async)?.status"
   >
     <div class="text-center text-sm">
       <p>Hello {{ player.current.username }}</p>
