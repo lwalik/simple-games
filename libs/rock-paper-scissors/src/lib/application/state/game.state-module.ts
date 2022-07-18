@@ -20,6 +20,7 @@ import { GETS_ALL_DISPLAY_WINNER_QUERY } from '../ports/primary/query/gets-all-d
 import { GETS_CURRENT_IS_QUEUE_VISIBLE_QUERY } from '../ports/primary/query/gets-current-is-queue-visible.query-port';
 import { WANT_NEXT_ROUND_COMMAND } from '../ports/primary/command/want-next-round.command-port';
 import { START_NEXT_ROUND_COMMAND } from '../ports/primary/command/start-next-round.command-port';
+import { GETS_CURRENT_QUEUE_STATUS_QUERY } from '../ports/primary/query/gets-current-queue-status.query-port';
 
 @NgModule({
   imports: [],
@@ -65,6 +66,10 @@ import { START_NEXT_ROUND_COMMAND } from '../ports/primary/command/start-next-ro
     },
     {
       provide: START_NEXT_ROUND_COMMAND,
+      useExisting: GameState,
+    },
+    {
+      provide: GETS_CURRENT_QUEUE_STATUS_QUERY,
       useExisting: GameState,
     },
   ],

@@ -18,7 +18,9 @@ import { GetsCurrentIsSelectPlayerCountVisibleQueryPort } from '../ports/primary
 import { GetsAllDisplayPlayerOnBoardQueryPort } from '../ports/primary/query/gets-all-display-player-on-board.query-port';
 import { GetsAllDisplayWinnerQueryPort } from '../ports/primary/query/gets-all-display-winner.query-port';
 import { GetsCurrentIsQueueVisibleQueryPort } from '../ports/primary/query/gets-current-is-queue-visible.query-port';
+import { WantNextRoundCommandPort } from '../ports/primary/command/want-next-round.command-port';
 import { StartNextRoundCommandPort } from '../ports/primary/command/start-next-round.command-port';
+import { GetsCurrentQueueStatusQueryPort } from '../ports/primary/query/gets-current-queue-status.query-port';
 import {
   SETS_RPS_BOARD_DTO,
   SetsRpsBoardDtoPort,
@@ -69,7 +71,7 @@ import { SetCurrentWinnerCommand } from '../ports/primary/command/set-current-wi
 import { IsQueueVisibleQuery } from '../ports/primary/query/is-queue-visible.query';
 import { WantNextRoundCommand } from '../ports/primary/command/want-next-round.command';
 import { StartNextRoundCommand } from '../ports/primary/command/start-next-round.command';
-import { WantNextRoundCommandPort } from '../ports/primary/command/want-next-round.command-port';
+import { QueueStatusQuery } from '../ports/primary/query/queue-status.query';
 import { SetActivePlayersCommand } from '../ports/primary/command/set-active-player.command';
 
 @Injectable()
@@ -93,7 +95,8 @@ export class GameState
     GetsAllDisplayWinnerQueryPort,
     GetsCurrentIsQueueVisibleQueryPort,
     WantNextRoundCommandPort,
-    StartNextRoundCommandPort
+    StartNextRoundCommandPort,
+    GetsCurrentQueueStatusQueryPort
 {
   constructor(
     @Inject(SETS_RPS_BOARD_DTO) private _setsRpsBoardDto: SetsRpsBoardDtoPort,
@@ -193,7 +196,6 @@ export class GameState
   takePlayer(command: TakePlayerCommand): Observable<void> {
     return this._setsStateGameContext.setState({
       currentPlayer: command.player,
-      othersPlayers: [],
       queueStatus: true,
       inGame: false,
     });
@@ -208,7 +210,8 @@ export class GameState
       switchMap(() =>
         this._patchesGameContext.patch({
           currentPlayer: {} as PlayerDTO,
-          othersPlayers: [],
+          queueStatus: true,
+          inGame: false,
         })
       )
     );
@@ -520,5 +523,16 @@ export class GameState
     }
 
     return [];
+  }
+
+  getCurrentQueueStatusQuery(): Observable<QueueStatusQuery> {
+    return this._selectsGameContext
+      .select()
+      .pipe(
+        map(
+          (gameContext: GameContext): QueueStatusQuery =>
+            new QueueStatusQuery(gameContext.queueStatus)
+        )
+      );
   }
 }
