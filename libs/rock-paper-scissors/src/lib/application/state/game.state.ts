@@ -417,14 +417,29 @@ export class GameState
   }
 
   getCurrentIsQueueVisibleQuery(): Observable<IsQueueVisibleQuery> {
-    return this._getsOneRpsBoardDto
-      .getOne()
-      .pipe(
-        map(
-          (board): IsQueueVisibleQuery =>
-            new IsQueueVisibleQuery(board.maxPlayers !== board.players.length)
-        )
-      );
+    return combineLatest([
+      this._selectsGameContext.select(),
+      this._getsOneRpsBoardDto.getOne(),
+    ]).pipe(
+      map(
+        ([context, board]): IsQueueVisibleQuery =>
+          new IsQueueVisibleQuery(
+            !context.inGame,
+            board.maxPlayers !== board.players.length
+          )
+      )
+    );
+    // return this._getsOneRpsBoardDto
+    //   .getOne()
+    //   .pipe(
+    //     map(
+    //       (board): IsQueueVisibleQuery =>
+    //         new IsQueueVisibleQuery(
+    //           true,
+    //           board.maxPlayers !== board.players.length
+    //         )
+    //     )
+    //   );
   }
 
   wantNextRound(command: WantNextRoundCommand): Observable<void> {

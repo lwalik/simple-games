@@ -1,11 +1,14 @@
-<div *ngIf="(isVisible$ | async)?.isVisible">
+<div *ngIf="(isVisible$ | async)?.isStringVisible">
   <div class="w-full grid grid-cols-1 mb-2 mx-auto">
     <p class="md:text-2xl text-center text-black text-base">
       Waiting for all players...
     </p>
   </div>
   <div *ngIf="players$ | async as players">
-    <ul class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 md:gap-4 gap-2">
+    <ul
+      *ngIf="(isVisible$ | async)?.isBtnsVisible"
+      class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 md:gap-4 gap-2"
+    >
       <li *ngFor="let player of players">
         <div
           *ngIf="

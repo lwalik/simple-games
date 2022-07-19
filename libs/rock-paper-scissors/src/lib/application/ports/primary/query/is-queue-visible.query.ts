@@ -1,3 +1,6 @@
 export class IsQueueVisibleQuery {
-  constructor(public readonly isVisible: boolean) {}
+  constructor(
+    public readonly isBtnsVisible: boolean,
+    public readonly isStringVisible: boolean
+  ) {}
 }
