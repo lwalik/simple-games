@@ -14,6 +14,7 @@ import {
   WinnersListComponentModule,
 } from '@rock-paper-scissors';
 import { RockPaperScissorsBoardPage } from './rock-paper-scissors-board.page';
+import { MatButtonModule } from '@angular/material/button';
 
 @NgModule({
   imports: [
@@ -35,6 +36,7 @@ import { RockPaperScissorsBoardPage } from './rock-paper-scissors-board.page';
     GameStateModule,
     ResetPlayersInGameComponentModule,
     WinnersListComponentModule,
+    MatButtonModule,
   ],
   declarations: [RockPaperScissorsBoardPage],
   providers: [],

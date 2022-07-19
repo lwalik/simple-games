@@ -1,11 +1,11 @@
 <div class="w-full grid grid-cols-12 items-center items-center mt-4">
   <a
-    class="col-span-1 col-start-12 text-amber-500 flex items-center"
+    class="col-span-1 col-start-12 text-amber-500 flex items-center hidden md:block"
     routerLink="/"
   >
     <svg
       fill="currentColor"
-      class="bi bi-arrow-left-square"
+      class="bi bi-arrow-left-square h-full"
       viewBox="0 0 36 36"
     >
       <path
@@ -14,6 +14,17 @@
       />
     </svg>
   </a>
+  <button
+    class="block md:hidden col-span-1 col-start-12"
+    mat-raised-button
+    color="warn"
+    routerLink="/"
+  >
+    Back
+  </button>
 </div>
 
-<lib-games-list></lib-games-list>
+<mat-tab-group mat-align-tabs="start" class="mb-8">
+  <mat-tab label="Multiplayer"><lib-games-list></lib-games-list></mat-tab>
+  <mat-tab label="Single Player"></mat-tab>
+</mat-tab-group>

@@ -6,6 +6,8 @@ import {
   GamesListComponentModule,
 } from '@games-library';
 import { GamesLibraryPage } from './games-library.page';
+import { MatTabsModule } from '@angular/material/tabs';
+import { MatButtonModule } from '@angular/material/button';
 
 @NgModule({
   imports: [
@@ -18,6 +20,8 @@ import { GamesLibraryPage } from './games-library.page';
     ]),
     GamesListComponentModule,
     FirebaseGamesServiceModule,
+    MatTabsModule,
+    MatButtonModule,
   ],
   declarations: [GamesLibraryPage],
   providers: [],

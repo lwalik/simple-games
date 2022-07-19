@@ -7,11 +7,6 @@ import { NavLinkDTO } from '../../../application/ports/secondary/dto/nav-link.dt
 export class InMemoryNavigationService implements GetsAllNavLinkDtoPort {
   private _data = [
     {
-      name: 'Home',
-      url: '/',
-      isActive: true,
-    },
-    {
       name: 'Games',
       url: 'games',
       isActive: true,
