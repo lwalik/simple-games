@@ -208,8 +208,16 @@ export class GameState
         this._setsRpsBoardDto.set({ ...board, players: [] })
       ),
       switchMap(() =>
-        this._patchesGameContext.patch({
-          currentPlayer: {} as PlayerDTO,
+        this._setsStateGameContext.setState({
+          currentPlayer: {
+            id: '',
+            playerId: 0,
+            username: '',
+            isActive: true,
+            isReady: false,
+            choice: '',
+            wantNext: false,
+          } as PlayerDTO,
           queueStatus: true,
           inGame: false,
         })
