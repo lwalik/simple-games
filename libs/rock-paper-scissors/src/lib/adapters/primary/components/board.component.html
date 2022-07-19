@@ -8,7 +8,7 @@
       *ngFor="let player of players; let i = index"
     >
       <div
-        class="row-start-2 flex flex-col items-center justify-center border-4 rounded-2xl px-4 shadow-lg"
+        class="px-0 md:px-2 row-start-2 flex flex-col items-center justify-center border-4 rounded-2xl shadow-lg"
         *ngIf="i % 2 !== 0"
       >
         <p class="text-center text-white">{{ player.username }}</p>
@@ -17,13 +17,13 @@
         </p>
         <div *ngIf="player.isCurrent">
           <div
-            class="flex justify-center"
+            class="flex justify-center md:flex-row flex-col"
             *ngIf="!player.isReady; else notReadyCurrent"
           >
             <button
               mat-raised-button
               color="accent"
-              class="w-full"
+              class="w-full px-0 md:px-2"
               (click)="onReadyButtonClicked()"
               [disabled]="!player.choice.name"
             >
@@ -32,7 +32,7 @@
             <button
               mat-raised-button
               color="warn"
-              class="w-full"
+              class="w-full px-0 md:px-2"
               (click)="onPickButtonClicked()"
             >
               Pick
@@ -40,11 +40,11 @@
           </div>
 
           <ng-template #notReadyCurrent>
-            <div class="flex justify-center">
+            <div class="flex justify-center md:flex-row flex-col">
               <button
                 mat-raised-button
                 color="accent"
-                class="w-full"
+                class="w-full px-0 md:px-2"
                 (click)="onNextButtonClicked()"
                 *ngIf="!player.wantNext"
               >
@@ -53,7 +53,7 @@
               <button
                 mat-raised-button
                 color="accent"
-                class="w-full"
+                class="w-full px-0 md:px-2"
                 (click)="onCancelButtonClicked()"
                 *ngIf="player.wantNext"
               >
@@ -65,7 +65,7 @@
       </div>
 
       <div
-        class="row-start-3 flex flex-col items-center justify-center border-4 rounded-2xl px-4 shadow-lg"
+        class="px-0 md:px-2 row-start-3 flex flex-col items-center justify-center border-4 rounded-2xl shadow-lg"
         *ngIf="i % 2 === 0"
       >
         <p class="text-center text-white">{{ player.username }}</p>
@@ -74,13 +74,13 @@
         </p>
         <div *ngIf="player.isCurrent">
           <div
-            class="flex justify-center"
+            class="flex justify-center md:flex-row flex-col"
             *ngIf="!player.isReady; else notReadyCurrent"
           >
             <button
               mat-raised-button
               color="accent"
-              class="w-full"
+              class="w-full px-0 md:px-2"
               (click)="onReadyButtonClicked()"
               [disabled]="!player.choice.name"
             >
@@ -89,7 +89,7 @@
             <button
               mat-raised-button
               color="warn"
-              class="w-full"
+              class="w-full px-0 md:px-2"
               (click)="onPickButtonClicked()"
             >
               Pick
@@ -97,11 +97,11 @@
           </div>
 
           <ng-template #notReadyCurrent>
-            <div class="flex justify-center">
+            <div class="flex justify-center md:flex-row flex-col">
               <button
                 mat-raised-button
                 color="accent"
-                class="w-full"
+                class="w-full px-0 md:px-2"
                 (click)="onNextButtonClicked()"
                 *ngIf="!player.wantNext"
               >
@@ -110,7 +110,7 @@
               <button
                 mat-raised-button
                 color="accent"
-                class="w-full"
+                class="w-full px-0 md:px-2"
                 (click)="onCancelButtonClicked()"
                 *ngIf="player.wantNext"
               >

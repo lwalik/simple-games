@@ -1,7 +1,14 @@
-<!-- <div class="bg-cyan-700">
-</div> -->
-
-<div class="w-4/5 bg-slate-300 mx-auto my-5 py-6 rounded-md">
+<div class="flex items-center justify-end mt-4">
+  <button
+    class="block md:hidden col-span-1 col-start-12"
+    mat-raised-button
+    color="warn"
+    routerLink="../"
+  >
+    Back
+  </button>
+</div>
+<div class="bg-slate-300 mx-auto my-5 py-6 rounded-md">
   <div class="w-full grid grid-cols-12 items-center">
     <div class="col-span-4 col-start-5">
       <lib-reset-players-in-game></lib-reset-players-in-game>
@@ -9,7 +16,10 @@
         <lib-winners-list></lib-winners-list>
       </div>
     </div>
-    <a class="col-span-1 col-start-12 text-amber-500" routerLink="/">
+    <a
+      class="hidden md:block col-span-1 col-start-12 text-amber-500"
+      routerLink="../"
+    >
       <svg
         fill="currentColor"
         class="bi bi-arrow-left-square"
@@ -22,7 +32,7 @@
       </svg>
     </a>
   </div>
-  <div class="px-24">
+  <div class="px-4 md:px-24">
     <lib-select-player-count></lib-select-player-count>
     <lib-queue-players></lib-queue-players>
     <lib-join-game></lib-join-game>
