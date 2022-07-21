@@ -4,6 +4,7 @@ import { RouterModule } from '@angular/router';
 import { GamesFlowPage } from './games-flow.page';
 import { RockPaperScissorsBoardPageModule } from './rock-paper-scissors-board.page-module';
 import { GamesLibraryPageModule } from './games-library.page-module';
+import { HangmanGameBoardPageModule } from './hangman-game-board.page-module';
 
 @NgModule({
   imports: [
@@ -20,6 +21,10 @@ import { GamesLibraryPageModule } from './games-library.page-module';
           {
             path: 'rock-paper-scissors',
             loadChildren: () => RockPaperScissorsBoardPageModule,
+          },
+          {
+            path: 'hangman-game',
+            loadChildren: () => HangmanGameBoardPageModule,
           },
         ],
       },

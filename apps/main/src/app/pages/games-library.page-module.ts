@@ -3,7 +3,8 @@ import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import {
   FirebaseGamesServiceModule,
-  GamesListComponentModule,
+  MultiGamesListComponentModule,
+  SingleGamesListComponentModule,
 } from '@games-library';
 import { GamesLibraryPage } from './games-library.page';
 import { MatTabsModule } from '@angular/material/tabs';
@@ -18,10 +19,11 @@ import { MatButtonModule } from '@angular/material/button';
         component: GamesLibraryPage,
       },
     ]),
-    GamesListComponentModule,
+    MultiGamesListComponentModule,
     FirebaseGamesServiceModule,
     MatTabsModule,
     MatButtonModule,
+    SingleGamesListComponentModule,
   ],
   declarations: [GamesLibraryPage],
   providers: [],
