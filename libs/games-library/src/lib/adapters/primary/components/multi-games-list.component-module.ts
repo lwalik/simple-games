@@ -1,13 +1,13 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { GamesListComponent } from './games-list.component';
+import { MultiGamesListComponent } from './multi-games-list.component';
 import { MatButtonModule } from '@angular/material/button';
 import { RouterModule } from '@angular/router';
 
 @NgModule({
   imports: [CommonModule, MatButtonModule, RouterModule],
-  declarations: [GamesListComponent],
+  declarations: [MultiGamesListComponent],
   providers: [],
-  exports: [GamesListComponent],
+  exports: [MultiGamesListComponent],
 })
-export class GamesListComponentModule {}
+export class MultiGamesListComponentModule {}

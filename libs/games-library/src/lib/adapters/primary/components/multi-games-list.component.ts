@@ -12,12 +12,12 @@ import {
 } from '../../../application/ports/secondary/dto/gets-all-game.dto-port';
 
 @Component({
-  selector: 'lib-games-list',
-  templateUrl: './games-list.component.html',
+  selector: 'lib-multi-games-list',
+  templateUrl: './multi-games-list.component.html',
   encapsulation: ViewEncapsulation.None,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class GamesListComponent {
+export class MultiGamesListComponent {
   games$: Observable<GameDTO[]> = this._getsAllGameDto.getAll();
 
   constructor(
