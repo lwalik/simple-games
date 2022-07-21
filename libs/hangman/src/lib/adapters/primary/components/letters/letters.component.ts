@@ -1,13 +1,23 @@
+import { ChangeDetectionStrategy, Component, Inject } from '@angular/core';
+import { Observable } from 'rxjs';
+import { LettersQuery } from '../../../../application/ports/primary/query/letters.query';
 import {
-  ChangeDetectionStrategy,
-  Component,
-  ViewEncapsulation,
-} from '@angular/core';
+  GETS_ALL_LETTERS_QUERY,
+  GetsAllLettersQueryPort,
+} from '../../../../application/ports/primary/query/gets-all-letters.query-port';
 
 @Component({
   selector: 'lib-letters',
   templateUrl: './letters.component.html',
-  encapsulation: ViewEncapsulation.None,
   changeDetection: ChangeDetectionStrategy.OnPush,
+  styleUrls: ['./letters.component.scss'],
 })
-export class LettersComponent {}
+export class LettersComponent {
+  letters$: Observable<LettersQuery[]> =
+    this._getsAllLettersQuery.getAllLettersQuery();
+
+  constructor(
+    @Inject(GETS_ALL_LETTERS_QUERY)
+    private _getsAllLettersQuery: GetsAllLettersQueryPort
+  ) {}
+}
