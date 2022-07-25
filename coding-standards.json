@@ -1,0 +1,6 @@
+{
+  "workspace": {
+    "workspaceConfig": "angular.json",
+    "workspaceTsConfig": "tsconfig.base.json"
+  }
+}
