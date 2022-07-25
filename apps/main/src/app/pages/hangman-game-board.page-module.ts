@@ -4,10 +4,7 @@ import { RouterModule } from '@angular/router';
 import {
   FirebaseHangmanGameServiceModule,
   HangmanGameStateModule,
-  InitLettersResolver,
-  InitLettersResolverModule,
   InMemoryHangmanGameStorageModule,
-  InMemoryLettersStorageModule,
   LettersComponentModule,
 } from '@hangman';
 import { HangmanGameBoardPage } from './hangman-game-board.page';
@@ -18,13 +15,10 @@ import { HangmanGameBoardPage } from './hangman-game-board.page';
     HangmanGameStateModule,
     FirebaseHangmanGameServiceModule,
     InMemoryHangmanGameStorageModule,
-    InMemoryLettersStorageModule,
-    InitLettersResolverModule,
     RouterModule.forChild([
       {
         path: '',
         component: HangmanGameBoardPage,
-        resolve: [InitLettersResolver],
       },
     ]),
     LettersComponentModule,
