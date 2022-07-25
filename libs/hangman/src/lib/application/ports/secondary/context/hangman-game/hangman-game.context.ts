@@ -1,4 +1,5 @@
 export interface HangmanGameContext {
-  readonly words: string[];
+  readonly username: string;
   readonly level: string;
+  readonly words: string[];
 }
