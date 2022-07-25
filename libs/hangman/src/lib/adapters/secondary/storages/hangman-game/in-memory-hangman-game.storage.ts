@@ -1,10 +1,10 @@
 import { Injectable } from '@angular/core';
 import { Observable, ReplaySubject, Subject, of } from 'rxjs';
 import { map, take } from 'rxjs/operators';
-import { SetsStateHangmanGameContextPort } from '../../../../application/ports/secondary/context/sets-state-hangman-game.context-port';
-import { SelectsHangmanGameContextPort } from '../../../../application/ports/secondary/context/selects-hangman-game.context-port';
-import { PatchesHangmanGameContextPort } from '../../../../application/ports/secondary/context/patches-hangman-game.context-port';
-import { HangmanGameContext } from '../../../../application/ports/secondary/context/hangman-game.context';
+import { SetsStateHangmanGameContextPort } from '../../../../application/ports/secondary/context/hangman-game/sets-state-hangman-game.context-port';
+import { SelectsHangmanGameContextPort } from '../../../../application/ports/secondary/context/hangman-game/selects-hangman-game.context-port';
+import { PatchesHangmanGameContextPort } from '../../../../application/ports/secondary/context/hangman-game/patches-hangman-game.context-port';
+import { HangmanGameContext } from '../../../../application/ports/secondary/context/hangman-game/hangman-game.context';
 
 @Injectable()
 export class InMemoryHangmanGameStorage
