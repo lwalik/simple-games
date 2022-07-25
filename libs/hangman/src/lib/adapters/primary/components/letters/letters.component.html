@@ -3,6 +3,8 @@
     *ngFor="let item of letters$ | async"
     class="letter"
     mat-raised-button
+    [disabled]="item.isDisabled"
+    (click)="onLetterClicked(item.letter)"
   >
     {{ item.letter }}
   </button>

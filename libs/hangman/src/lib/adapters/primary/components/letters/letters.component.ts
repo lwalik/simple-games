@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, Inject } from '@angular/core';
-import { Observable } from 'rxjs';
+import { map, Observable } from 'rxjs';
 import { LettersQuery } from '../../../../application/ports/primary/query/letters.query';
 import {
   GETS_ALL_LETTERS_QUERY,
@@ -20,4 +20,14 @@ export class LettersComponent {
     @Inject(GETS_ALL_LETTERS_QUERY)
     private _getsAllLettersQuery: GetsAllLettersQueryPort
   ) {}
+
+  onLetterClicked(input: string): void {
+    this.letters$ = this.letters$.pipe(
+      map((letters) =>
+        letters.map((letter) =>
+          letter.letter === input ? { letter: input, isDisabled: true } : letter
+        )
+      )
+    );
+  }
 }
