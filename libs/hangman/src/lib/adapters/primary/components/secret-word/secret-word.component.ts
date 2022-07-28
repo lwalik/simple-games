@@ -17,10 +17,6 @@ import { combineLatest, map, Observable, of } from 'rxjs';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SecretWordComponent {
-  // word$: Observable<string[]> = of('BIBLIOTEKA'.split('')).pipe(
-  //   map((letters) => letters.map((letter) => letter))
-  // );
-
   word$: Observable<string[]> = combineLatest([
     of('BIBLIOTEKA'.split('')),
     this._selectsHangmanGameContext.select(),
