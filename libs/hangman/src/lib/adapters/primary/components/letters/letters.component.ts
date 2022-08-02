@@ -1,7 +1,6 @@
 import { ChangeDetectionStrategy, Component, Inject } from '@angular/core';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { LettersQuery } from '../../../../application/ports/primary/query/letters.query';
 import {
   GETS_ALL_LETTERS_QUERY,
   GetsAllLettersQueryPort,
@@ -11,6 +10,7 @@ import {
   SelectLetterCommandPort,
 } from '../../../../application/ports/primary/command/select-letter.command-port';
 import { SelectLetterCommand } from 'libs/hangman/src/lib/application/ports/primary/command/select-letter.command';
+import { LetterQuery } from 'libs/hangman/src/lib/application/ports/primary/query/letter.query';
 
 @Component({
   selector: 'lib-letters',
@@ -19,7 +19,7 @@ import { SelectLetterCommand } from 'libs/hangman/src/lib/application/ports/prim
   styleUrls: ['./letters.component.scss'],
 })
 export class LettersComponent {
-  letters$: Observable<LettersQuery[]> =
+  letters$: Observable<LetterQuery[]> =
     this._getsAllLettersQuery.getAllLettersQuery();
 
   constructor(
