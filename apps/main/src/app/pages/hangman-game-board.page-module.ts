@@ -4,11 +4,13 @@ import { RouterModule } from '@angular/router';
 import {
   FirebaseHangmanGameServiceModule,
   HangmanGameStateModule,
+  InMemoryHangmanGameStorageModule,
   InitHangmanGameResolver,
   InitHangmanGameResolverModule,
-  InMemoryHangmanGameStorageModule,
   LettersComponentModule,
+  LivesCounterComponentModule,
   SecretWordComponentModule,
+  InMemoryLettersStorageModule,
 } from '@hangman';
 import { HangmanGameBoardPage } from './hangman-game-board.page';
 
@@ -18,6 +20,7 @@ import { HangmanGameBoardPage } from './hangman-game-board.page';
     HangmanGameStateModule,
     FirebaseHangmanGameServiceModule,
     InMemoryHangmanGameStorageModule,
+    InMemoryLettersStorageModule,
     InitHangmanGameResolverModule,
     RouterModule.forChild([
       {
@@ -28,6 +31,7 @@ import { HangmanGameBoardPage } from './hangman-game-board.page';
     ]),
     LettersComponentModule,
     SecretWordComponentModule,
+    LivesCounterComponentModule,
   ],
   declarations: [HangmanGameBoardPage],
   providers: [],
