@@ -24,7 +24,7 @@ export class InitHangmanGameResolver implements Resolve<boolean> {
     state: RouterStateSnapshot
   ): Observable<boolean> {
     return this._initHangmanGameCommand
-      .initHangmanGame(new InitHangmanGameCommand())
+      .initHangmanGame(new InitHangmanGameCommand('mid'))
       .pipe(map((_) => true));
   }
 }
