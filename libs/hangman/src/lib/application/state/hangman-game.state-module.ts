@@ -3,6 +3,9 @@ import { HangmanGameState } from './hangman-game.state';
 import { GETS_ALL_LETTERS_QUERY } from '../ports/primary/query/gets-all-letters.query-port';
 import { SELECT_LETTER_COMMAND } from '../ports/primary/command/select-letter.command-port';
 import { INIT_HANGMAN_GAME_COMMAND } from '../ports/primary/command/init-hangman-game.command-port';
+import { GETS_CURRENT_SELECTED_WORD_QUERY } from '../ports/primary/query/gets-current-selected-word.query-port';
+import { TAKE_WORD_COMMAND } from '../ports/primary/command/take-word.command-port';
+import { GETS_ALL_LIVES_QUERY } from '../ports/primary/query/gets-all-lives.query-port';
 
 @NgModule({
   imports: [],
@@ -12,6 +15,12 @@ import { INIT_HANGMAN_GAME_COMMAND } from '../ports/primary/command/init-hangman
     { provide: GETS_ALL_LETTERS_QUERY, useExisting: HangmanGameState },
     { provide: SELECT_LETTER_COMMAND, useExisting: HangmanGameState },
     { provide: INIT_HANGMAN_GAME_COMMAND, useExisting: HangmanGameState },
+    {
+      provide: GETS_CURRENT_SELECTED_WORD_QUERY,
+      useExisting: HangmanGameState,
+    },
+    { provide: TAKE_WORD_COMMAND, useExisting: HangmanGameState },
+    { provide: GETS_ALL_LIVES_QUERY, useExisting: HangmanGameState },
   ],
   exports: [],
 })

@@ -1,8 +1,12 @@
 import { Inject, Injectable } from '@angular/core';
-import { Observable, of, switchMap, take, tap } from 'rxjs';
+import { Observable, of } from 'rxjs';
+import { filter, map, switchMap, take } from 'rxjs/operators';
 import { GetsAllLettersQueryPort } from '../ports/primary/query/gets-all-letters.query-port';
 import { SelectLetterCommandPort } from '../ports/primary/command/select-letter.command-port';
 import { InitHangmanGameCommandPort } from '../ports/primary/command/init-hangman-game.command-port';
+import { GetsCurrentSelectedWordQueryPort } from '../ports/primary/query/gets-current-selected-word.query-port';
+import { TakeWordCommandPort } from '../ports/primary/command/take-word.command-port';
+import { GetsAllLivesQueryPort } from '../ports/primary/query/gets-all-lives.query-port';
 import {
   SETS_STATE_HANGMAN_GAME_CONTEXT,
   SetsStateHangmanGameContextPort,
@@ -15,16 +19,31 @@ import {
   SELECTS_HANGMAN_GAME_CONTEXT,
   SelectsHangmanGameContextPort,
 } from '../ports/secondary/context/hangman-game/selects-hangman-game.context-port';
-import { LettersQuery } from '../ports/primary/query/letters.query';
+import {
+  GETS_ONE_HANGMAN_GAME_DTO,
+  GetsOneHangmanGameDtoPort,
+} from '../ports/secondary/dto/gets-one-hangman-game.dto-port';
+import {
+  SELECTS_LETTERS_CONTEXT,
+  SelectsLettersContextPort,
+} from '../ports/secondary/context/letters/selects-letters.context-port';
+import { LetterQuery } from '../ports/primary/query/letter.query';
 import { SelectLetterCommand } from '../ports/primary/command/select-letter.command';
 import { InitHangmanGameCommand } from '../ports/primary/command/init-hangman-game.command';
+import { SelectedWordQuery } from '../ports/primary/query/selected-word.query';
+import { HangmanGameContext } from '../ports/secondary/context/hangman-game/hangman-game.context';
+import { TakeWordCommand } from '../ports/primary/command/take-word.command';
+import { LivesQuery } from '../ports/primary/query/lives.query';
 
 @Injectable()
 export class HangmanGameState
   implements
     GetsAllLettersQueryPort,
     SelectLetterCommandPort,
-    InitHangmanGameCommandPort
+    InitHangmanGameCommandPort,
+    GetsCurrentSelectedWordQueryPort,
+    TakeWordCommandPort,
+    GetsAllLivesQueryPort
 {
   constructor(
     @Inject(SETS_STATE_HANGMAN_GAME_CONTEXT)
@@ -32,47 +51,23 @@ export class HangmanGameState
     @Inject(PATCHES_HANGMAN_GAME_CONTEXT)
     private _patchesHangmanGameContext: PatchesHangmanGameContextPort,
     @Inject(SELECTS_HANGMAN_GAME_CONTEXT)
-    private _selectsHangmanGameContext: SelectsHangmanGameContextPort
+    private _selectsHangmanGameContext: SelectsHangmanGameContextPort,
+    @Inject(GETS_ONE_HANGMAN_GAME_DTO)
+    private _getsOneHangmanGameDto: GetsOneHangmanGameDtoPort,
+    @Inject(SELECTS_LETTERS_CONTEXT)
+    private _selectsLettersContext: SelectsLettersContextPort
   ) {}
 
-  getAllLettersQuery(): Observable<LettersQuery[]> {
-    return of([
-      { letter: 'A', isDisabled: false },
-      { letter: 'Ą', isDisabled: false },
-      { letter: 'B', isDisabled: false },
-      { letter: 'C', isDisabled: false },
-      { letter: 'Ć', isDisabled: false },
-      { letter: 'D', isDisabled: false },
-      { letter: 'E', isDisabled: false },
-      { letter: 'Ę', isDisabled: false },
-      { letter: 'F', isDisabled: false },
-      { letter: 'G', isDisabled: false },
-      { letter: 'H', isDisabled: false },
-      { letter: 'I', isDisabled: false },
-      { letter: 'J', isDisabled: false },
-      { letter: 'K', isDisabled: false },
-      { letter: 'L', isDisabled: false },
-      { letter: 'Ł', isDisabled: false },
-      { letter: 'M', isDisabled: false },
-      { letter: 'N', isDisabled: false },
-      { letter: 'Ń', isDisabled: false },
-      { letter: 'O', isDisabled: false },
-      { letter: 'Ó', isDisabled: false },
-      { letter: 'P', isDisabled: false },
-      { letter: 'Q', isDisabled: false },
-      { letter: 'R', isDisabled: false },
-      { letter: 'S', isDisabled: false },
-      { letter: 'Ś', isDisabled: false },
-      { letter: 'T', isDisabled: false },
-      { letter: 'U', isDisabled: false },
-      { letter: 'V', isDisabled: false },
-      { letter: 'W', isDisabled: false },
-      { letter: 'X', isDisabled: true },
-      { letter: 'Y', isDisabled: false },
-      { letter: 'Z', isDisabled: false },
-      { letter: 'Ż', isDisabled: false },
-      { letter: 'Ź', isDisabled: false },
-    ]);
+  getAllLettersQuery(): Observable<LetterQuery[]> {
+    return this._selectsLettersContext
+      .select()
+      .pipe(
+        map((lettersContext) =>
+          lettersContext.letters.map(
+            (letter) => new LetterQuery(letter.letter, letter.isDisabled)
+          )
+        )
+      );
   }
 
   selectLetter(command: SelectLetterCommand): Observable<void> {
@@ -82,17 +77,64 @@ export class HangmanGameState
         this._patchesHangmanGameContext.patch({
           ...context,
           selectedLetters: [...context.selectedLetters, command.letter],
+          livesCount:
+            context.currentWord.includes(command.letter) ||
+            context.livesCount === 0
+              ? context.livesCount
+              : context.livesCount - 1,
         })
       )
     );
   }
 
   initHangmanGame(command: InitHangmanGameCommand): Observable<void> {
-    return this._setsStateHangmanGameContext.setState({
-      username: '',
-      level: 'low',
-      selectedLetters: [],
-      words: [],
-    });
+    return this._getsOneHangmanGameDto.getOne().pipe(
+      switchMap((game) =>
+        this._setsStateHangmanGameContext.setState({
+          username: '',
+          selectedLevel: command.level,
+          selectedLetters: [],
+          words: game.secretWords.filter(
+            (item) => item.level === command.level
+          )[0].words,
+          currentWord: '',
+          livesCount: 6,
+        })
+      )
+    );
+  }
+
+  getCurrentSelectedWordQuery(): Observable<SelectedWordQuery> {
+    return this._selectsHangmanGameContext
+      .select()
+      .pipe(
+        map(
+          (hangmanGameContext: HangmanGameContext): SelectedWordQuery =>
+            new SelectedWordQuery(hangmanGameContext.currentWord)
+        )
+      );
+  }
+
+  takeWord(command: TakeWordCommand): Observable<void> {
+    return this._selectsHangmanGameContext.select().pipe(
+      take(1),
+      switchMap((context) =>
+        this._patchesHangmanGameContext.patch({
+          words: context.words.slice(0, -1),
+          currentWord: context.words.slice(-1)[0] as string,
+        })
+      )
+    );
+  }
+
+  getAllLivesQuery(): Observable<LivesQuery> {
+    return this._selectsHangmanGameContext
+      .select()
+      .pipe(
+        map(
+          (hangmanGameContext: HangmanGameContext): LivesQuery =>
+            new LivesQuery(hangmanGameContext.livesCount)
+        )
+      );
   }
 }
