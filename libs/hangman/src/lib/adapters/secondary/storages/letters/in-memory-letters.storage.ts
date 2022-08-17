@@ -1,9 +1,10 @@
 import { Injectable } from '@angular/core';
 import { Observable, ReplaySubject, Subject, of } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { map, take } from 'rxjs/operators';
 import { SelectsLettersContextPort } from '../../../../application/ports/secondary/context/letters/selects-letters.context-port';
 import { SetsStateLettersContextPort } from '../../../../application/ports/secondary/context/letters/sets-state-letters.context-port';
 import { LettersContext } from '../../../../application/ports/secondary/context/letters/letters.context';
+import { PatchesLettersContextPort } from '../../../../application/ports/secondary/context/letters/patches-letters.context-port';
 
 const LETTERS = {
   letters: [
@@ -46,19 +47,27 @@ const LETTERS = {
 
 @Injectable()
 export class InMemoryLettersStorage
-  implements SelectsLettersContextPort, SetsStateLettersContextPort
+  implements
+    SelectsLettersContextPort,
+    SetsStateLettersContextPort,
+    PatchesLettersContextPort
 {
   private _subject: Subject<LettersContext> = new ReplaySubject<LettersContext>(
     1
   );
 
   select(): Observable<LettersContext> {
-    console.log('select');
     return this._subject.asObservable();
   }
 
   setState(): Observable<void> {
-    console.log('setState');
     return of(this._subject.next(LETTERS)).pipe(map(() => void 0));
+  }
+
+  patch(state: Partial<LettersContext>): Observable<void> {
+    return this._subject.pipe(
+      take(1),
+      map((context) => this._subject.next({ ...context, ...state }))
+    );
   }
 }
