@@ -1,6 +1,5 @@
 import { ChangeDetectionStrategy, Component, Inject } from '@angular/core';
 import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
 import {
   GETS_ALL_LETTERS_QUERY,
   GetsAllLettersQueryPort,
@@ -15,8 +14,8 @@ import { LetterQuery } from 'libs/hangman/src/lib/application/ports/primary/quer
 @Component({
   selector: 'lib-letters',
   templateUrl: './letters.component.html',
-  changeDetection: ChangeDetectionStrategy.OnPush,
   styleUrls: ['./letters.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class LettersComponent {
   letters$: Observable<LetterQuery[]> =
@@ -32,17 +31,6 @@ export class LettersComponent {
   onLetterClicked(input: string): void {
     this._selectLetterCommand
       .selectLetter(new SelectLetterCommand(input))
-      .subscribe(
-        () =>
-          (this.letters$ = this.letters$.pipe(
-            map((letters) =>
-              letters.map((letter) =>
-                letter.letter === input
-                  ? { letter: input, isDisabled: true }
-                  : letter
-              )
-            )
-          ))
-      );
+      .subscribe();
   }
 }

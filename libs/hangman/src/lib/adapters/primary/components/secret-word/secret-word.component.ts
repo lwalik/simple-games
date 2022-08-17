@@ -4,13 +4,7 @@ import {
   Inject,
   ViewEncapsulation,
 } from '@angular/core';
-import { Observable, combineLatest } from 'rxjs';
-import { map } from 'rxjs/operators';
-import { HangmanGameContext } from '../../../../application/ports/secondary/context/hangman-game/hangman-game.context';
-import {
-  SELECTS_HANGMAN_GAME_CONTEXT,
-  SelectsHangmanGameContextPort,
-} from '../../../../application/ports/secondary/context/hangman-game/selects-hangman-game.context-port';
+import { Observable } from 'rxjs';
 import {
   TAKE_WORD_COMMAND,
   TakeWordCommandPort,
@@ -19,7 +13,13 @@ import {
   GETS_CURRENT_SELECTED_WORD_QUERY,
   GetsCurrentSelectedWordQueryPort,
 } from '../../../../application/ports/primary/query/gets-current-selected-word.query-port';
+import {
+  RESET_LETTERS_COMMAND,
+  ResetLettersCommandPort,
+} from '../../../../application/ports/primary/command/reset-letters.command-port';
 import { TakeWordCommand } from '../../../../application/ports/primary/command/take-word.command';
+import { ResetLettersCommand } from '../../../../application/ports/primary/command/reset-letters.command';
+import { SelectedWordQuery } from '../../../../application/ports/primary/query/selected-word.query';
 
 @Component({
   selector: 'lib-secret-word',
@@ -28,30 +28,24 @@ import { TakeWordCommand } from '../../../../application/ports/primary/command/t
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SecretWordComponent {
-  word$: Observable<string[]> = combineLatest([
-    this._getsCurrentSelectedWordQuery.getCurrentSelectedWordQuery(),
-    this._selectsHangmanGameContext.select(),
-  ]).pipe(
-    map(([secretWord, context]) =>
-      [...secretWord.word].map((letter) =>
-        context.selectedLetters.includes(letter) ? letter : ''
-      )
-    )
-  );
-
-  allWords$: Observable<HangmanGameContext> = this._selectsHangmanGameContext
-    .select()
-    .pipe(map((context) => context));
+  word$: Observable<SelectedWordQuery> =
+    this._getsCurrentSelectedWordQuery.getCurrentSelectedWordQuery();
 
   constructor(
-    @Inject(SELECTS_HANGMAN_GAME_CONTEXT)
-    private _selectsHangmanGameContext: SelectsHangmanGameContextPort,
     @Inject(TAKE_WORD_COMMAND) private _takeWordCommand: TakeWordCommandPort,
     @Inject(GETS_CURRENT_SELECTED_WORD_QUERY)
-    private _getsCurrentSelectedWordQuery: GetsCurrentSelectedWordQueryPort
+    private _getsCurrentSelectedWordQuery: GetsCurrentSelectedWordQueryPort,
+    @Inject(RESET_LETTERS_COMMAND)
+    private _resetLettersCommandPort: ResetLettersCommandPort
   ) {}
 
   onStartBtnClicked(): void {
-    this._takeWordCommand.takeWord(new TakeWordCommand()).subscribe();
+    this._takeWordCommand
+      .takeWord(new TakeWordCommand())
+      .subscribe(() =>
+        this._resetLettersCommandPort
+          .resetLetter(new ResetLettersCommand())
+          .subscribe()
+      );
   }
 }

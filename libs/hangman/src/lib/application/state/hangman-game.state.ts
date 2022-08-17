@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@angular/core';
-import { combineLatest, Observable, of, tap } from 'rxjs';
+import { combineLatest, Observable, tap } from 'rxjs';
 import { map, switchMap, take } from 'rxjs/operators';
 import { GetsAllLettersQueryPort } from '../ports/primary/query/gets-all-letters.query-port';
 import { SelectLetterCommandPort } from '../ports/primary/command/select-letter.command-port';
@@ -40,7 +40,10 @@ import { HangmanGameContext } from '../ports/secondary/context/hangman-game/hang
 import { TakeWordCommand } from '../ports/primary/command/take-word.command';
 import { LivesQuery } from '../ports/primary/query/lives.query';
 import { ResetLettersCommand } from '../ports/primary/command/reset-letters.command';
-import { LettersContext } from '../ports/secondary/context/letters/letters.context';
+import {
+  PATCHES_LETTERS_CONTEXT,
+  PatchesLettersContextPort,
+} from '../ports/secondary/context/letters/patches-letters.context-port';
 
 @Injectable()
 export class HangmanGameState
@@ -65,7 +68,9 @@ export class HangmanGameState
     @Inject(SELECTS_LETTERS_CONTEXT)
     private _selectsLettersContext: SelectsLettersContextPort,
     @Inject(SETS_STATE_LETTERS_CONTEXT)
-    private _setsStateLettersContext: SetsStateLettersContextPort
+    private _setsStateLettersContext: SetsStateLettersContextPort,
+    @Inject(PATCHES_LETTERS_CONTEXT)
+    private _patchesLettersContext: PatchesLettersContextPort
   ) {}
 
   getAllLettersQuery(): Observable<LetterQuery[]> {
@@ -81,18 +86,37 @@ export class HangmanGameState
   }
 
   selectLetter(command: SelectLetterCommand): Observable<void> {
-    return this._selectsHangmanGameContext.select().pipe(
+    return combineLatest([
+      this._selectsHangmanGameContext.select(),
+      this._selectsLettersContext.select(),
+    ]).pipe(
       take(1),
-      switchMap((context) =>
-        this._patchesHangmanGameContext.patch({
-          ...context,
-          selectedLetters: [...context.selectedLetters, command.letter],
-          livesCount:
-            context.currentWord.includes(command.letter) ||
-            context.livesCount === 0
-              ? context.livesCount
-              : context.livesCount - 1,
-        })
+      switchMap(([HangmanGameContext, LettersContext]) =>
+        this._patchesHangmanGameContext
+          .patch({
+            ...HangmanGameContext,
+            selectedLetters: [
+              ...HangmanGameContext.selectedLetters,
+              command.letter,
+            ],
+            livesCount:
+              HangmanGameContext.currentWord.includes(command.letter) ||
+              HangmanGameContext.livesCount === 0
+                ? HangmanGameContext.livesCount
+                : HangmanGameContext.livesCount - 1,
+          })
+          .pipe(
+            take(1),
+            switchMap(() =>
+              this._patchesLettersContext.patch({
+                letters: LettersContext.letters.map((letter) =>
+                  letter.letter === command.letter
+                    ? { letter: command.letter, isDisabled: true }
+                    : letter
+                ),
+              })
+            )
+          )
       )
     );
   }
@@ -116,14 +140,14 @@ export class HangmanGameState
   }
 
   getCurrentSelectedWordQuery(): Observable<SelectedWordQuery> {
-    return this._selectsHangmanGameContext
-      .select()
-      .pipe(
-        map(
-          (hangmanGameContext: HangmanGameContext): SelectedWordQuery =>
-            new SelectedWordQuery(hangmanGameContext.currentWord)
+    return this._selectsHangmanGameContext.select().pipe(
+      map((context) =>
+        [...context.currentWord].map((letter) =>
+          context.selectedLetters.includes(letter) ? letter : ''
         )
-      );
+      ),
+      map((word) => new SelectedWordQuery(word))
+    );
   }
 
   takeWord(command: TakeWordCommand): Observable<void> {
@@ -137,6 +161,7 @@ export class HangmanGameState
         this._patchesHangmanGameContext.patch({
           words: context.words.slice(0, -1),
           currentWord: context.words.slice(-1)[0] as string,
+          selectedLetters: [],
         })
       )
     );
@@ -154,6 +179,6 @@ export class HangmanGameState
   }
 
   resetLetter(command: ResetLettersCommand): Observable<void> {
-    return of(void 0);
+    return this._setsStateLettersContext.setState();
   }
 }

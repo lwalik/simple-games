@@ -1,4 +1,3 @@
 export class SelectedWordQuery {
-  constructor(public readonly word: string) {
-  }
+  constructor(public cutWord: string[]) {}
 }
