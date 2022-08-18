@@ -4,7 +4,7 @@ import { RouterModule } from '@angular/router';
 import { GamesFlowPage } from './games-flow.page';
 import { RockPaperScissorsBoardPageModule } from './rock-paper-scissors-board.page-module';
 import { GamesLibraryPageModule } from './games-library.page-module';
-import { HangmanGameBoardPageModule } from './hangman-game-board.page-module';
+import { HangmanGameFlowPageModule } from './hangman-game-flow.page-module';
 
 @NgModule({
   imports: [
@@ -24,7 +24,7 @@ import { HangmanGameBoardPageModule } from './hangman-game-board.page-module';
           },
           {
             path: 'hangman-game',
-            loadChildren: () => HangmanGameBoardPageModule,
+            loadChildren: () => HangmanGameFlowPageModule,
           },
         ],
       },
