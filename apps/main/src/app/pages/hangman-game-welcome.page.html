@@ -1,10 +1,17 @@
 <div class="w-2/4 h-3/4 mx-auto mt-16 flex justify-center items-center">
-  <button
-    class="w-24 h-12"
-    mat-raised-button
-    color="primary"
-    (click)="goNext()"
-  >
-    Start
-  </button>
+  <div class="grid-cols-1">
+    <div class="mb-12">
+      <lib-select-difficulty-level></lib-select-difficulty-level>
+    </div>
+    <div class="flex items-center justify-center">
+      <button
+        class="w-24 h-12 mx-auto"
+        mat-raised-button
+        color="primary"
+        (click)="goNext()"
+      >
+        Start
+      </button>
+    </div>
+  </div>
 </div>
