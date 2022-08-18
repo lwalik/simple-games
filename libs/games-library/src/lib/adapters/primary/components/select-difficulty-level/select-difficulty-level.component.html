@@ -1,1 +1,10 @@
-<h2>Select Difficulty Level Component</h2>
+<form>
+  <mat-form-field appearance="fill">
+    <mat-label class="text-cyan-600">Difficult</mat-label>
+    <mat-select>
+      <mat-option *ngFor="let level of difficultyLevels" [value]="level">
+        {{ level }}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+</form>

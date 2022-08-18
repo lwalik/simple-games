@@ -10,4 +10,6 @@ import {
   encapsulation: ViewEncapsulation.None,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class SelectDifficultyLevelComponent {}
+export class SelectDifficultyLevelComponent {
+  readonly difficultyLevels: string[] = ['Low', 'Medium'];
+}
