@@ -8,3 +8,4 @@ export * from './lib/adapters/primary/resolvers/init-hangman-game/init-hangman-g
 export * from './lib/adapters/primary/resolvers/init-hangman-game/init-hangman-game.resolver-module';
 export * from './lib/adapters/primary/components/lives-counter/lives-counter.component-module';
 export * from './lib/adapters/secondary/storages/letters/in-memory-letters.storage-module';
+export * from './lib/adapters/primary/components/select-difficulty-level/select-difficulty-level.component-module';
