@@ -1,10 +1,11 @@
-<form>
-  <mat-form-field appearance="fill">
-    <mat-label class="text-cyan-600">Difficult</mat-label>
-    <mat-select>
-      <mat-option *ngFor="let level of difficultyLevels" [value]="level">
-        {{ level }}
-      </mat-option>
-    </mat-select>
-  </mat-form-field>
-</form>
+<mat-form-field appearance="fill" [formGroup]="difficultyForm">
+  <mat-label class="text-cyan-600">Difficult</mat-label>
+  <mat-select
+    formControlName="selectedLevel"
+    (selectionChange)="onSelectedLevelChange(difficultyForm)"
+  >
+    <mat-option *ngFor="let level of difficultyLevels" [value]="level">
+      {{ level }}
+    </mat-option>
+  </mat-select>
+</mat-form-field>
