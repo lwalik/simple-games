@@ -9,6 +9,7 @@ import { TakeWordCommandPort } from '../ports/primary/command/take-word.command-
 import { GetsAllLivesQueryPort } from '../ports/primary/query/gets-all-lives.query-port';
 import { ResetLettersCommandPort } from '../ports/primary/command/reset-letters.command-port';
 import { SelectDifficultyLevelCommandPort } from '../ports/primary/command/select-difficulty-level.command-port';
+import { TakeSecretWordsCommandPort } from '../ports/primary/command/take-secret-words.command-port';
 import {
   SETS_STATE_HANGMAN_GAME_CONTEXT,
   SetsStateHangmanGameContextPort,
@@ -46,6 +47,7 @@ import { TakeWordCommand } from '../ports/primary/command/take-word.command';
 import { LivesQuery } from '../ports/primary/query/lives.query';
 import { ResetLettersCommand } from '../ports/primary/command/reset-letters.command';
 import { SelectDifficultyLevelCommand } from '../ports/primary/command/select-difficulty-level.command';
+import { TakeSecretWordsCommand } from '../ports/primary/command/take-secret-words.command';
 
 @Injectable()
 export class HangmanGameState
@@ -57,7 +59,8 @@ export class HangmanGameState
     TakeWordCommandPort,
     GetsAllLivesQueryPort,
     ResetLettersCommandPort,
-    SelectDifficultyLevelCommandPort
+    SelectDifficultyLevelCommandPort,
+    TakeSecretWordsCommandPort
 {
   constructor(
     @Inject(SETS_STATE_HANGMAN_GAME_CONTEXT)
@@ -187,8 +190,20 @@ export class HangmanGameState
       selectedLevel: command.selectedLevel,
     });
   }
+
+  takeSecretWords(command: TakeSecretWordsCommand): Observable<void> {
+    return combineLatest([
+      this._getsOneHangmanGameDto.getOne(),
+      this._selectsHangmanGameContext.select(),
+    ]).pipe(
+      take(1),
+      switchMap(([hangmanGameDto, context]) =>
+        this._patchesHangmanGameContext.patch({
+          words: hangmanGameDto.secretWords.filter(
+            (item) => item.level === context.selectedLevel
+          )[0].words,
+        })
+      )
+    );
+  }
 }
-// TODO Use this fragment to get words
-// words: [game.secretWords.filter(
-//   (item) => item.level === command.level
-// )[0].words],

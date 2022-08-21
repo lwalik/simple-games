@@ -20,6 +20,11 @@ import {
 import { TakeWordCommand } from '../../../../application/ports/primary/command/take-word.command';
 import { ResetLettersCommand } from '../../../../application/ports/primary/command/reset-letters.command';
 import { SelectedWordQuery } from '../../../../application/ports/primary/query/selected-word.query';
+import {
+  SELECTS_HANGMAN_GAME_CONTEXT,
+  SelectsHangmanGameContextPort,
+} from '../../../../application/ports/secondary/context/hangman-game/selects-hangman-game.context-port';
+import { HangmanGameContext } from '../../../../application/ports/secondary/context/hangman-game/hangman-game.context';
 
 @Component({
   selector: 'lib-secret-word',
@@ -31,12 +36,17 @@ export class SecretWordComponent {
   word$: Observable<SelectedWordQuery> =
     this._getsCurrentSelectedWordQuery.getCurrentSelectedWordQuery();
 
+  context$: Observable<HangmanGameContext> =
+    this._selectsHangmanGameContext.select();
+
   constructor(
     @Inject(TAKE_WORD_COMMAND) private _takeWordCommand: TakeWordCommandPort,
     @Inject(GETS_CURRENT_SELECTED_WORD_QUERY)
     private _getsCurrentSelectedWordQuery: GetsCurrentSelectedWordQueryPort,
     @Inject(RESET_LETTERS_COMMAND)
-    private _resetLettersCommandPort: ResetLettersCommandPort
+    private _resetLettersCommandPort: ResetLettersCommandPort,
+    @Inject(SELECTS_HANGMAN_GAME_CONTEXT)
+    private _selectsHangmanGameContext: SelectsHangmanGameContextPort
   ) {}
 
   onStartBtnClicked(): void {

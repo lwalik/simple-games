@@ -9,8 +9,13 @@ import {
   SELECT_DIFFICULTY_LEVEL_COMMAND_PORT,
   SelectDifficultyLevelCommandPort,
 } from '../../../../application/ports/primary/command/select-difficulty-level.command-port';
+import {
+  TAKE_SECRET_WORDS_COMMAND_PORT,
+  TakeSecretWordsCommandPort,
+} from '../../../../application/ports/primary/command/take-secret-words.command-port';
 import { SelectDifficultyLevelCommand } from '../../../../application/ports/primary/command/select-difficulty-level.command';
 import { Router } from '@angular/router';
+import { TakeSecretWordsCommand } from '../../../../application/ports/primary/command/take-secret-words.command';
 
 @Component({
   selector: 'lib-select-difficulty-level',
@@ -27,7 +32,9 @@ export class SelectDifficultyLevelComponent {
   constructor(
     @Inject(SELECT_DIFFICULTY_LEVEL_COMMAND_PORT)
     private _selectDifficultyLevelCommandPort: SelectDifficultyLevelCommandPort,
-    private _router: Router
+    private _router: Router,
+    @Inject(TAKE_SECRET_WORDS_COMMAND_PORT)
+    private _takeSecretWordsCommandPort: TakeSecretWordsCommandPort
   ) {}
 
   onStartBtnClicked(form: FormGroup): void {
@@ -36,9 +43,13 @@ export class SelectDifficultyLevelComponent {
         new SelectDifficultyLevelCommand(form.get('selectedLevel')?.value)
       )
       .subscribe(() =>
-        this._router.navigateByUrl(
-          this._router.url.replace(/\/start/, '/board')
-        )
+        this._takeSecretWordsCommandPort
+          .takeSecretWords(new TakeSecretWordsCommand())
+          .subscribe(() =>
+            this._router.navigateByUrl(
+              this._router.url.replace(/\/start/, '/board')
+            )
+          )
       );
   }
 }
