@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@angular/core';
-import { combineLatest, Observable, tap } from 'rxjs';
+import { Observable, combineLatest } from 'rxjs';
 import { map, switchMap, take } from 'rxjs/operators';
 import { GetsAllLettersQueryPort } from '../ports/primary/query/gets-all-letters.query-port';
 import { SelectLetterCommandPort } from '../ports/primary/command/select-letter.command-port';
@@ -8,6 +8,7 @@ import { GetsCurrentSelectedWordQueryPort } from '../ports/primary/query/gets-cu
 import { TakeWordCommandPort } from '../ports/primary/command/take-word.command-port';
 import { GetsAllLivesQueryPort } from '../ports/primary/query/gets-all-lives.query-port';
 import { ResetLettersCommandPort } from '../ports/primary/command/reset-letters.command-port';
+import { SelectDifficultyLevelCommandPort } from '../ports/primary/command/select-difficulty-level.command-port';
 import {
   SETS_STATE_HANGMAN_GAME_CONTEXT,
   SetsStateHangmanGameContextPort,
@@ -32,18 +33,19 @@ import {
   SETS_STATE_LETTERS_CONTEXT,
   SetsStateLettersContextPort,
 } from '../ports/secondary/context/letters/sets-state-letters.context-port';
-import { LetterQuery } from '../ports/primary/query/letter.query';
-import { SelectLetterCommand } from '../ports/primary/command/select-letter.command';
-import { InitHangmanGameCommand } from '../ports/primary/command/init-hangman-game.command';
-import { SelectedWordQuery } from '../ports/primary/query/selected-word.query';
-import { HangmanGameContext } from '../ports/secondary/context/hangman-game/hangman-game.context';
-import { TakeWordCommand } from '../ports/primary/command/take-word.command';
-import { LivesQuery } from '../ports/primary/query/lives.query';
-import { ResetLettersCommand } from '../ports/primary/command/reset-letters.command';
 import {
   PATCHES_LETTERS_CONTEXT,
   PatchesLettersContextPort,
 } from '../ports/secondary/context/letters/patches-letters.context-port';
+import { LetterQuery } from '../ports/primary/query/letter.query';
+import { SelectLetterCommand } from '../ports/primary/command/select-letter.command';
+import { HangmanGameContext } from '../ports/secondary/context/hangman-game/hangman-game.context';
+import { InitHangmanGameCommand } from '../ports/primary/command/init-hangman-game.command';
+import { SelectedWordQuery } from '../ports/primary/query/selected-word.query';
+import { TakeWordCommand } from '../ports/primary/command/take-word.command';
+import { LivesQuery } from '../ports/primary/query/lives.query';
+import { ResetLettersCommand } from '../ports/primary/command/reset-letters.command';
+import { SelectDifficultyLevelCommand } from '../ports/primary/command/select-difficulty-level.command';
 
 @Injectable()
 export class HangmanGameState
@@ -54,7 +56,8 @@ export class HangmanGameState
     GetsCurrentSelectedWordQueryPort,
     TakeWordCommandPort,
     GetsAllLivesQueryPort,
-    ResetLettersCommandPort
+    ResetLettersCommandPort,
+    SelectDifficultyLevelCommandPort
 {
   constructor(
     @Inject(SETS_STATE_HANGMAN_GAME_CONTEXT)
@@ -122,21 +125,16 @@ export class HangmanGameState
   }
 
   initHangmanGame(command: InitHangmanGameCommand): Observable<void> {
-    return this._getsOneHangmanGameDto.getOne().pipe(
-      tap(() => this._setsStateLettersContext.setState()),
-      switchMap((game) =>
-        this._setsStateHangmanGameContext.setState({
-          username: '',
-          selectedLevel: command.level,
-          selectedLetters: [],
-          words: game.secretWords.filter(
-            (item) => item.level === command.level
-          )[0].words,
-          currentWord: '',
-          livesCount: 6,
-        })
-      )
-    );
+    return this._setsStateHangmanGameContext
+      .setState({
+        username: '',
+        selectedLevel: '',
+        selectedLetters: [],
+        words: [],
+        currentWord: '',
+        livesCount: 6,
+      })
+      .pipe(switchMap(() => this._setsStateLettersContext.setState()));
   }
 
   getCurrentSelectedWordQuery(): Observable<SelectedWordQuery> {
@@ -181,4 +179,16 @@ export class HangmanGameState
   resetLetter(command: ResetLettersCommand): Observable<void> {
     return this._setsStateLettersContext.setState();
   }
+
+  selectDifficultyLevel(
+    command: SelectDifficultyLevelCommand
+  ): Observable<void> {
+    return this._patchesHangmanGameContext.patch({
+      selectedLevel: command.selectedLevel,
+    });
+  }
 }
+// TODO Use this fragment to get words
+// words: [game.secretWords.filter(
+//   (item) => item.level === command.level
+// )[0].words],

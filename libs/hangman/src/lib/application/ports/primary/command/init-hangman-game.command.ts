@@ -1,3 +1,1 @@
-export class InitHangmanGameCommand {
-  constructor(public readonly level: string) {}
-}
+export class InitHangmanGameCommand {}

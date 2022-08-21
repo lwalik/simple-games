@@ -4,23 +4,42 @@ import { RouterModule } from '@angular/router';
 import { HangmanGameWelcomePageModule } from './hangman-game-welcome.page-module';
 import { HangmanGameBoardPageModule } from './hangman-game-board.page-module';
 import { HangmanGameFlowPage } from './hangman-game-flow.page';
+import {
+  FirebaseHangmanGameServiceModule,
+  HangmanGameStateModule,
+  InitHangmanGameResolver,
+  InitHangmanGameResolverModule,
+  InMemoryHangmanGameStorageModule,
+  InMemoryLettersStorageModule,
+} from '@hangman';
 
 @NgModule({
   imports: [
     CommonModule,
+    HangmanGameStateModule,
+    FirebaseHangmanGameServiceModule,
+    InMemoryHangmanGameStorageModule,
+    InMemoryLettersStorageModule,
+    InitHangmanGameResolverModule,
     RouterModule.forChild([
       {
         path: '',
-        redirectTo: 'start',
-        pathMatch: 'full',
-      },
-      {
-        path: 'start',
-        loadChildren: () => HangmanGameWelcomePageModule,
-      },
-      {
-        path: 'board',
-        loadChildren: () => HangmanGameBoardPageModule,
+        resolve: [InitHangmanGameResolver],
+        children: [
+          {
+            path: '',
+            pathMatch: 'full',
+            redirectTo: '/start',
+          },
+          {
+            path: 'start',
+            loadChildren: () => HangmanGameWelcomePageModule,
+          },
+          {
+            path: 'board',
+            loadChildren: () => HangmanGameBoardPageModule,
+          },
+        ],
       },
     ]),
   ],

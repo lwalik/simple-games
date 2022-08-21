@@ -13,8 +13,4 @@ import { Router } from '@angular/router';
 })
 export class HangmanGameWelcomePage {
   constructor(private _router: Router) {}
-
-  goNext(): void {
-    this._router.navigateByUrl(this._router.url.replace(/\/start/, '/board'));
-  }
 }
