@@ -9,6 +9,7 @@ import { GETS_ALL_LIVES_QUERY } from '../ports/primary/query/gets-all-lives.quer
 import { RESET_LETTERS_COMMAND } from '../ports/primary/command/reset-letters.command-port';
 import { SELECT_DIFFICULTY_LEVEL_COMMAND_PORT } from '../ports/primary/command/select-difficulty-level.command-port';
 import { TAKE_SECRET_WORDS_COMMAND_PORT } from '../ports/primary/command/take-secret-words.command-port';
+import { INIT_HANGMAN_BOARD_COMMAND_PORT } from '../ports/primary/command/init-hangman-board.command-port';
 
 @NgModule({
   imports: [],
@@ -31,6 +32,10 @@ import { TAKE_SECRET_WORDS_COMMAND_PORT } from '../ports/primary/command/take-se
     },
     {
       provide: TAKE_SECRET_WORDS_COMMAND_PORT,
+      useExisting: HangmanGameState,
+    },
+    {
+      provide: INIT_HANGMAN_BOARD_COMMAND_PORT,
       useExisting: HangmanGameState,
     },
   ],

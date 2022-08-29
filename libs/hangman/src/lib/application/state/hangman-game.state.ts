@@ -10,6 +10,7 @@ import { GetsAllLivesQueryPort } from '../ports/primary/query/gets-all-lives.que
 import { ResetLettersCommandPort } from '../ports/primary/command/reset-letters.command-port';
 import { SelectDifficultyLevelCommandPort } from '../ports/primary/command/select-difficulty-level.command-port';
 import { TakeSecretWordsCommandPort } from '../ports/primary/command/take-secret-words.command-port';
+import { InitHangmanBoardCommandPort } from '../ports/primary/command/init-hangman-board.command-port';
 import {
   SETS_STATE_HANGMAN_GAME_CONTEXT,
   SetsStateHangmanGameContextPort,
@@ -60,7 +61,8 @@ export class HangmanGameState
     GetsAllLivesQueryPort,
     ResetLettersCommandPort,
     SelectDifficultyLevelCommandPort,
-    TakeSecretWordsCommandPort
+    TakeSecretWordsCommandPort,
+    InitHangmanBoardCommandPort
 {
   constructor(
     @Inject(SETS_STATE_HANGMAN_GAME_CONTEXT)
@@ -203,6 +205,27 @@ export class HangmanGameState
             (item) => item.level === context.selectedLevel
           )?.words,
         })
+      )
+    );
+  }
+
+  initHangmanBoard(command: InitHangmanGameCommand): Observable<void> {
+    return this._setsStateLettersContext.setState().pipe(
+      switchMap(() =>
+        this._selectsHangmanGameContext.select().pipe(
+          take(1),
+          map((context) => ({
+            ...context,
+            words: context.words.sort(() => Math.random() - 0.5),
+          })),
+          switchMap((context) =>
+            this._patchesHangmanGameContext.patch({
+              words: context.words.slice(0, -1),
+              currentWord: context.words.slice(-1)[0] as string,
+              selectedLetters: [],
+            })
+          )
+        )
       )
     );
   }
