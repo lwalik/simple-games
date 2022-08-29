@@ -24,7 +24,7 @@ import {
     RouterModule.forChild([
       {
         path: '',
-        resolve: [InitHangmanGameResolver],
+
         children: [
           {
             path: '',
@@ -34,6 +34,7 @@ import {
           {
             path: 'start',
             loadChildren: () => HangmanGameWelcomePageModule,
+            resolve: [InitHangmanGameResolver],
           },
           {
             path: 'board',

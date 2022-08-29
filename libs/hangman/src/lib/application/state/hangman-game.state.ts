@@ -199,9 +199,9 @@ export class HangmanGameState
       take(1),
       switchMap(([hangmanGameDto, context]) =>
         this._patchesHangmanGameContext.patch({
-          words: hangmanGameDto.secretWords.filter(
+          words: hangmanGameDto.secretWords.find(
             (item) => item.level === context.selectedLevel
-          )[0].words,
+          )?.words,
         })
       )
     );
