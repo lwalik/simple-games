@@ -7,6 +7,8 @@ import { HangmanGameFlowPage } from './hangman-game-flow.page';
 import {
   FirebaseHangmanGameServiceModule,
   HangmanGameStateModule,
+  InitHangmanBoardResolver,
+  InitHangmanBoardResolverModule,
   InitHangmanGameResolver,
   InitHangmanGameResolverModule,
   InMemoryHangmanGameStorageModule,
@@ -21,6 +23,7 @@ import {
     InMemoryHangmanGameStorageModule,
     InMemoryLettersStorageModule,
     InitHangmanGameResolverModule,
+    InitHangmanBoardResolverModule,
     RouterModule.forChild([
       {
         path: '',
@@ -39,6 +42,7 @@ import {
           {
             path: 'board',
             loadChildren: () => HangmanGameBoardPageModule,
+            resolve: [InitHangmanBoardResolver],
           },
         ],
       },
