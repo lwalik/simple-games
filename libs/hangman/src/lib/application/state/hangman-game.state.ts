@@ -11,6 +11,7 @@ import { ResetLettersCommandPort } from '../ports/primary/command/reset-letters.
 import { SelectDifficultyLevelCommandPort } from '../ports/primary/command/select-difficulty-level.command-port';
 import { TakeSecretWordsCommandPort } from '../ports/primary/command/take-secret-words.command-port';
 import { InitHangmanBoardCommandPort } from '../ports/primary/command/init-hangman-board.command-port';
+import { IsGameOverQueryPort } from '../ports/primary/query/is-game-over.query-port';
 import {
   SETS_STATE_HANGMAN_GAME_CONTEXT,
   SetsStateHangmanGameContextPort,
@@ -49,6 +50,7 @@ import { LivesQuery } from '../ports/primary/query/lives.query';
 import { ResetLettersCommand } from '../ports/primary/command/reset-letters.command';
 import { SelectDifficultyLevelCommand } from '../ports/primary/command/select-difficulty-level.command';
 import { TakeSecretWordsCommand } from '../ports/primary/command/take-secret-words.command';
+import { GameOverQuery } from '../ports/primary/query/game-over.query';
 
 @Injectable()
 export class HangmanGameState
@@ -62,7 +64,8 @@ export class HangmanGameState
     ResetLettersCommandPort,
     SelectDifficultyLevelCommandPort,
     TakeSecretWordsCommandPort,
-    InitHangmanBoardCommandPort
+    InitHangmanBoardCommandPort,
+    IsGameOverQueryPort
 {
   constructor(
     @Inject(SETS_STATE_HANGMAN_GAME_CONTEXT)
@@ -228,5 +231,11 @@ export class HangmanGameState
         )
       )
     );
+  }
+
+  isGameOverQuery(): Observable<GameOverQuery> {
+    return this._selectsHangmanGameContext
+      .select()
+      .pipe(map((context) => new GameOverQuery(context.livesCount === 0)));
   }
 }

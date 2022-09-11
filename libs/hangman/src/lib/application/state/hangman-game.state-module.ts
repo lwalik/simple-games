@@ -10,6 +10,7 @@ import { RESET_LETTERS_COMMAND } from '../ports/primary/command/reset-letters.co
 import { SELECT_DIFFICULTY_LEVEL_COMMAND_PORT } from '../ports/primary/command/select-difficulty-level.command-port';
 import { TAKE_SECRET_WORDS_COMMAND_PORT } from '../ports/primary/command/take-secret-words.command-port';
 import { INIT_HANGMAN_BOARD_COMMAND_PORT } from '../ports/primary/command/init-hangman-board.command-port';
+import { IS_GAME_OVER_QUERY_PORT } from '../ports/primary/query/is-game-over.query-port';
 
 @NgModule({
   imports: [],
@@ -36,6 +37,10 @@ import { INIT_HANGMAN_BOARD_COMMAND_PORT } from '../ports/primary/command/init-h
     },
     {
       provide: INIT_HANGMAN_BOARD_COMMAND_PORT,
+      useExisting: HangmanGameState,
+    },
+    {
+      provide: IS_GAME_OVER_QUERY_PORT,
       useExisting: HangmanGameState,
     },
   ],
