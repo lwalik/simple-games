@@ -27,7 +27,6 @@ import {
     RouterModule.forChild([
       {
         path: '',
-
         children: [
           {
             path: '',

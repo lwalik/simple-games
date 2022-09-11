@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import {
+  IfGameOverDirectiveModule,
   LettersComponentModule,
   LivesCounterComponentModule,
   SecretWordComponentModule,
@@ -20,6 +21,7 @@ import { HangmanGameBoardPage } from './hangman-game-board.page';
     LettersComponentModule,
     SecretWordComponentModule,
     LivesCounterComponentModule,
+    IfGameOverDirectiveModule,
   ],
   declarations: [HangmanGameBoardPage],
   providers: [],

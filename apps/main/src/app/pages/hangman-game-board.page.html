@@ -25,7 +25,10 @@
 </div>
 
 <div class="w-2/3 mx-auto mt-24">
-  <lib-lives-counter></lib-lives-counter>
-  <lib-secret-word></lib-secret-word>
-  <lib-letters></lib-letters>
+  <ng-container *ifGameOver="'' else stillInGame"> Test</ng-container>
+  <ng-template #stillInGame>
+    <lib-lives-counter></lib-lives-counter>
+    <lib-secret-word></lib-secret-word>
+    <lib-letters></lib-letters>
+  </ng-template>
 </div>
