@@ -12,3 +12,4 @@ export * from './lib/adapters/primary/components/select-difficulty-level/select-
 export * from './lib/adapters/primary/resolvers/init-hangman-board/init-hangman-board.resolver';
 export * from './lib/adapters/primary/resolvers/init-hangman-board/init-hangman-board.resolver-module';
 export * from './lib/adapters/primary/directives/is-game-over/if-game-over.directive-module';
+export * from './lib/adapters/primary/components/game-over/game-over.component-module';
