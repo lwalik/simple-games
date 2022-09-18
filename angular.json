@@ -10,9 +10,7 @@
       "architect": {
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
-          "outputs": [
-            "{options.outputPath}"
-          ],
+          "outputs": ["{options.outputPath}"],
           "options": {
             "outputPath": "dist/apps/main",
             "index": "apps/main/src/index.html",
@@ -20,12 +18,9 @@
             "polyfills": "apps/main/src/polyfills.ts",
             "tsConfig": "apps/main/tsconfig.app.json",
             "inlineStyleLanguage": "scss",
-            "assets": [
-              "apps/main/src/favicon.ico",
-              "apps/main/src/assets"
-            ],
+            "assets": ["apps/main/src/favicon.ico", "apps/main/src/assets"],
             "styles": [
-              "./node_modules/@angular/material/prebuilt-themes/purple-green.css",
+              "./node_modules/@angular/material/prebuilt-themes/deeppurple-amber.css",
               "apps/main/src/styles.scss"
             ],
             "scripts": []
@@ -62,42 +57,29 @@
             }
           },
           "defaultConfiguration": "production",
-          "dependsOn": [
-            "^build"
-          ]
+          "dependsOn": ["^build"]
         },
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
-            "production": {
-              "browserTarget": "main:build:production"
-            },
-            "development": {
-              "browserTarget": "main:build:development"
-            }
+            "production": { "browserTarget": "main:build:production" },
+            "development": { "browserTarget": "main:build:development" }
           },
           "defaultConfiguration": "development"
         },
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
-          "options": {
-            "browserTarget": "main:build"
-          }
+          "options": { "browserTarget": "main:build" }
         },
         "lint": {
           "builder": "@nrwl/linter:eslint",
           "options": {
-            "lintFilePatterns": [
-              "apps/main/**/*.ts",
-              "apps/main/**/*.html"
-            ]
+            "lintFilePatterns": ["apps/main/**/*.ts", "apps/main/**/*.html"]
           }
         },
         "test": {
           "builder": "@nrwl/jest:jest",
-          "outputs": [
-            "coverage/apps/main"
-          ],
+          "outputs": ["coverage/apps/main"],
           "options": {
             "jestConfig": "apps/main/jest.config.ts",
             "passWithNoTests": true
@@ -129,27 +111,17 @@
             "devServerTarget": "main:serve:development"
           },
           "configurations": {
-            "production": {
-              "devServerTarget": "main:serve:production"
-            }
+            "production": { "devServerTarget": "main:serve:production" }
           }
         },
         "lint": {
           "builder": "@nrwl/linter:eslint",
-          "outputs": [
-            "{options.outputFile}"
-          ],
-          "options": {
-            "lintFilePatterns": [
-              "apps/main-e2e/**/*.{js,ts}"
-            ]
-          }
+          "outputs": ["{options.outputFile}"],
+          "options": { "lintFilePatterns": ["apps/main-e2e/**/*.{js,ts}"] }
         }
       },
       "tags": [],
-      "implicitDependencies": [
-        "main"
-      ]
+      "implicitDependencies": ["main"]
     },
     "rock-paper-scissors": {
       "projectType": "library",
@@ -159,9 +131,7 @@
       "architect": {
         "test": {
           "builder": "@nrwl/jest:jest",
-          "outputs": [
-            "coverage/rock-paper-scissors"
-          ],
+          "outputs": ["coverage/rock-paper-scissors"],
           "options": {
             "jestConfig": "libs/rock-paper-scissors/jest.config.js",
             "passWithNoTests": true
@@ -177,9 +147,7 @@
       "architect": {
         "test": {
           "builder": "@nrwl/jest:jest",
-          "outputs": [
-            "coverage/navigation"
-          ],
+          "outputs": ["coverage/navigation"],
           "options": {
             "jestConfig": "libs/navigation/jest.config.js",
             "passWithNoTests": true
@@ -195,9 +163,7 @@
       "architect": {
         "test": {
           "builder": "@nrwl/jest:jest",
-          "outputs": [
-            "coverage/users"
-          ],
+          "outputs": ["coverage/users"],
           "options": {
             "jestConfig": "libs/users/jest.config.js",
             "passWithNoTests": true
@@ -213,9 +179,7 @@
       "architect": {
         "test": {
           "builder": "@nrwl/jest:jest",
-          "outputs": [
-            "coverage/games-library"
-          ],
+          "outputs": ["coverage/games-library"],
           "options": {
             "jestConfig": "libs/games-library/jest.config.js",
             "passWithNoTests": true
@@ -231,11 +195,25 @@
       "architect": {
         "test": {
           "builder": "@nrwl/jest:jest",
-          "outputs": [
-            "coverage/core"
-          ],
+          "outputs": ["coverage/core"],
           "options": {
             "jestConfig": "libs/core/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
+    "hangman": {
+      "projectType": "library",
+      "root": "libs/hangman",
+      "sourceRoot": "libs/hangman/src",
+      "prefix": "lib",
+      "architect": {
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/hangman"],
+          "options": {
+            "jestConfig": "libs/hangman/jest.config.js",
             "passWithNoTests": true
           }
         }
@@ -243,37 +221,17 @@
     }
   },
   "npmScope": "simple-games",
-  "affected": {
-    "defaultBase": "main"
-  },
+  "affected": { "defaultBase": "main" },
   "implicitDependencies": {
-    "package.json": {
-      "dependencies": "*",
-      "devDependencies": "*"
-    },
+    "package.json": { "dependencies": "*", "devDependencies": "*" },
     ".eslintrc.json": "*"
   },
   "tasksRunnerOptions": {
     "default": {
       "runner": "nx/tasks-runners/default",
-      "options": {
-        "cacheableOperations": [
-          "build",
-          "lint",
-          "test",
-          "e2e"
-        ]
-      }
+      "options": { "cacheableOperations": ["build", "lint", "test", "e2e"] }
     }
   },
-  "targetDefaults": {
-    "build": {
-      "dependsOn": [
-        "^build"
-      ]
-    }
-  },
-  "cli": {
-    "analytics": false
-  }
+  "targetDefaults": { "build": { "dependsOn": ["^build"] } },
+  "cli": { "analytics": false }
 }

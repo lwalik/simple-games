@@ -1,0 +1,13 @@
+<div
+  class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8 xl:grid-cols-10 gap-2"
+>
+  <button
+    *ngFor="let item of letters$ | async"
+    class="letter"
+    mat-raised-button
+    [disabled]="item.isDisabled"
+    (click)="onLetterClicked(item.letter)"
+  >
+    {{ item.letter }}
+  </button>
+</div>

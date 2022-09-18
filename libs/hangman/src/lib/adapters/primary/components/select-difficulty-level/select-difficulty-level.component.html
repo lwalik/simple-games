@@ -1,0 +1,22 @@
+<form
+  [formGroup]="difficultyForm"
+  class="flex flex-col items-center justify-center"
+>
+  <mat-form-field class="mb-6" appearance="fill">
+    <mat-label class="text-cyan-600">Difficult</mat-label>
+    <mat-select formControlName="selectedLevel">
+      <mat-option *ngFor="let level of difficultyLevels" [value]="level">
+        {{ level }}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <button
+    class="w-24 h-12 mx-auto"
+    mat-raised-button
+    color="accent"
+    (click)="onStartBtnClicked(difficultyForm)"
+  >
+    Start
+  </button>
+</form>

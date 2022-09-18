@@ -1,0 +1,11 @@
+import { NgModule } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { LettersComponent } from './letters.component';
+import { MatButtonModule } from '@angular/material/button';
+@NgModule({
+  imports: [CommonModule, MatButtonModule],
+  declarations: [LettersComponent],
+  providers: [],
+  exports: [LettersComponent],
+})
+export class LettersComponentModule {}

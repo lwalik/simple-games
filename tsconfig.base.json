@@ -19,7 +19,8 @@
       "@navigation": ["libs/navigation/src/index.ts"],
       "@users": ["libs/users/src/index.ts"],
       "@games-library": ["libs/games-library/src/index.ts"],
-      "@core": ["libs/core/src/index.ts"]
+      "@core": ["libs/core/src/index.ts"],
+      "@hangman": ["libs/hangman/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]
