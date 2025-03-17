@@ -1,4 +1,4 @@
-## SIMPLE GAMES
+# SIMPLE GAMES
 
 A project carried out in private learning and play.
 
